@@ -59,6 +59,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
     private boolean importChildren = false;
     private int numberOfChildren = 0;
     private String opacErrorMessage = "";
+    private boolean additionalImport = false;
 
     /**
      * Standard constructor.
@@ -159,13 +160,17 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
                     this.createProcessForm.setChildProcesses(ServiceManager.getImportService().getChildProcesses(
                             opac, this.currentRecordId, projectId, templateId, numberOfChildren));
                 }
-                // import ancestors
-                LinkedList<TempProcess> processes = ServiceManager.getImportService().importProcessHierarchy(
-                        this.currentRecordId, opac, projectId, templateId, this.hitModel.getImportDepth(),
-                        this.createProcessForm.getRulesetManagement().getFunctionalKeys(
-                                FunctionalMetadata.HIGHERLEVEL_IDENTIFIER));
 
-                fillCreateProcessForm(processes);
+                LinkedList<TempProcess> processes = new LinkedList<>(createProcessForm.getProcesses());
+                if(processes.size() == 0 || !additionalImport) {
+                    // import ancestors
+                    processes = ServiceManager.getImportService().importProcessHierarchy(
+                            this.currentRecordId, opac, projectId, templateId, this.hitModel.getImportDepth(),
+                            this.createProcessForm.getRulesetManagement().getFunctionalKeys(
+                                    FunctionalMetadata.HIGHERLEVEL_IDENTIFIER));
+                }
+
+                fillCreateProcessForm(processes, additionalImport);
 
                 String summary = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulSummary");
                 String detail = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulDetail",
@@ -292,5 +297,24 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
     public String getNumberOfChildProcessesWarning() {
         return Helper.getTranslation("newProcess.catalogueSearch.manyChildrenWarning",
                 Collections.singletonList(String.valueOf(this.numberOfChildren)));
+    }
+
+    /**
+     * Checks the additional import
+     *
+     * @return true if is additional import
+     */
+    public boolean isAdditionalImport() {
+        return additionalImport;
+    }
+
+    /**
+     * Set additional import
+     *
+     * @param additionalImport
+     *            the value if is additional import
+     */
+    public void setAdditionalImport(boolean additionalImport) {
+        this.additionalImport = additionalImport;
     }
 }
