@@ -11,8 +11,6 @@
 
 package org.kitodo.production.forms.createprocess;
 
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;

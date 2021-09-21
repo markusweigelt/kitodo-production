@@ -14,11 +14,7 @@ package org.kitodo.production.forms.createprocess;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
@@ -47,6 +43,9 @@ import org.xml.sax.SAXException;
 public class FileUploadDialog extends MetadataImportDialog {
 
     private String selectedCatalog;
+
+    private boolean additionalImport = false;
+
     private static final Logger logger = LogManager.getLogger(FileUploadDialog.class);
 
     public FileUploadDialog(CreateProcessForm createProcessForm) {
@@ -63,20 +62,26 @@ public class FileUploadDialog extends MetadataImportDialog {
         UploadedFile uploadedFile = event.getFile();
         ImportService importService = ServiceManager.getImportService();
         try {
-            Document internalDocument = importService.convertDataRecordToInternal(
-                createRecordFromXMLElement(IOUtils.toString(uploadedFile.getInputstream(), Charset.defaultCharset())),
-                selectedCatalog, false);
-            TempProcess tempProcess = importService.createTempProcessFromDocument(internalDocument,
-                createProcessForm.getTemplate().getId(), createProcessForm.getProject().getId());
+            LinkedList<TempProcess> processes = new LinkedList<>(createProcessForm.getProcesses());
 
-            LinkedList<TempProcess> processes = new LinkedList<>();
-            processes.add(tempProcess);
+            if(processes.size() == 0 || !additionalImport ) {
+                Document internalDocument = importService.convertDataRecordToInternal(
+                        createRecordFromXMLElement(IOUtils.toString(uploadedFile.getInputstream(), Charset.defaultCharset())),
+                        selectedCatalog, false);
+                TempProcess tempProcess = importService.createTempProcessFromDocument(internalDocument,
+                        createProcessForm.getTemplate().getId(), createProcessForm.getProject().getId());
 
-            TempProcess parentProcess = extractParentRecordFromFile(uploadedFile, internalDocument);
-            if (Objects.nonNull(parentProcess)) {
-                processes.add(parentProcess);
+                processes = new LinkedList<>();
+                processes.add(tempProcess);
+
+                TempProcess parentProcess = extractParentRecordFromFile(uploadedFile, internalDocument);
+                if (Objects.nonNull(parentProcess)) {
+                    processes.add(parentProcess);
+                }
             }
-            fillCreateProcessForm(processes);
+
+            fillCreateProcessForm(processes, additionalImport);
+
             showRecord();
         } catch (IOException | ProcessGenerationException | URISyntaxException | ParserConfigurationException
                 | UnsupportedFormatException | SAXException | ConfigException | XPathExpressionException e) {
@@ -92,13 +97,15 @@ public class FileUploadDialog extends MetadataImportDialog {
 
         if (higherLevelIdentifier.size() > 0) {
             ImportService importService = ServiceManager.getImportService();
-            String parentID = importService.getParentID(internalDocument, higherLevelIdentifier.toArray()[0].toString());
+            String parentID = importService.getParentID(internalDocument,
+                higherLevelIdentifier.toArray()[0].toString());
             if (Objects.nonNull(parentID) && OPACConfig.isParentInRecord(selectedCatalog)) {
                 Document internalParentDocument = importService.convertDataRecordToInternal(
-                        createRecordFromXMLElement(IOUtils.toString(uploadedFile.getInputstream(), Charset.defaultCharset())),
-                        selectedCatalog, true);
+                    createRecordFromXMLElement(
+                        IOUtils.toString(uploadedFile.getInputstream(), Charset.defaultCharset())),
+                    selectedCatalog, true);
                 return importService.createTempProcessFromDocument(internalParentDocument,
-                        createProcessForm.getTemplate().getId(), createProcessForm.getProject().getId());
+                    createProcessForm.getTemplate().getId(), createProcessForm.getProject().getId());
             }
         }
         return null;
@@ -132,6 +139,7 @@ public class FileUploadDialog extends MetadataImportDialog {
 
     /**
      * Get selectedCatalog.
+     * 
      * @return the selected catalog.
      */
     public String getSelectedCatalog() {
@@ -140,9 +148,30 @@ public class FileUploadDialog extends MetadataImportDialog {
 
     /**
      * Set selected catalog.
-     * @param selectedCatalog the selected catalog.
+     * 
+     * @param selectedCatalog
+     *            the selected catalog.
      */
     public void setSelectedCatalog(String selectedCatalog) {
         this.selectedCatalog = selectedCatalog;
+    }
+
+    /**
+     * Checks the additional import
+     * 
+     * @return true if is additional import
+     */
+    public boolean isAdditionalImport() {
+        return additionalImport;
+    }
+
+    /**
+     * Set additional import
+     * 
+     * @param additionalImport
+     *            the value if is additional import
+     */
+    public void setAdditionalImport(boolean additionalImport) {
+        this.additionalImport = additionalImport;
     }
 }

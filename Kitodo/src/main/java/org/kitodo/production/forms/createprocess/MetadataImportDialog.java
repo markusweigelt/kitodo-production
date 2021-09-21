@@ -102,9 +102,9 @@ public abstract class MetadataImportDialog {
      * on successful import.
      * @param processes list of TempProcess instances
      */
-    void fillCreateProcessForm(LinkedList<TempProcess> processes) {
+    void fillCreateProcessForm(LinkedList<TempProcess> processes, boolean additional) {
         this.createProcessForm.setProcesses(processes);
-        if (!processes.isEmpty() && processes.getFirst().getMetadataNodes().getLength() > 0) {
+        if (processes.size() > 0 && processes.getFirst().getMetadataNodes().getLength() > 0) {
             TempProcess firstProcess = processes.getFirst();
             this.createProcessForm.getProcessDataTab()
                     .setDocType(firstProcess.getWorkpiece().getLogicalStructure().getType());

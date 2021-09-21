@@ -111,9 +111,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      */
     public ProcessFieldedMetadata(Division<?> structure, StructuralElementViewInterface divisionView) {
         this(null, structure, divisionView, null, null, structure.getMetadata());
-        this.treeNode = new DefaultTreeNode();
-        treeNode.setExpanded(true);
-        createMetadataTable();
+        buildTreeNodeAndCreateMetadataTable();
     }
 
     /**
@@ -571,11 +569,27 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      *            metadata to overwrite with
      */
     public void setMetadata(Collection<Metadata> metadata) {
-        this.metadata.clear();
-        this.metadata.addAll(metadata);
-        this.treeNode = new DefaultTreeNode();
-        treeNode.setExpanded(true);
-        createMetadataTable();
+        metadata.clear();
+        metadata.addAll(metadata);
+        buildTreeNodeAndCreateMetadataTable();
+    }
+
+    /**
+     * Add the metadata of this fielded metadata.
+     *
+     * @param metadata
+     *            metadata to add
+     */
+    public void addMetadataIfNotExists(Collection<Metadata> metadata) {
+        Collection<Metadata> metadataToAdd = new ArrayList<>();
+
+        metadata.stream().forEach( potentialMetadataItem -> {
+            if( this.metadata.stream().noneMatch(item -> item.getKey().equals(potentialMetadataItem.getKey()))) {
+                metadataToAdd.add(potentialMetadataItem);
+            }
+        });
+
+        buildTreeNodeAndCreateMetadataTable();
     }
 
     /**
@@ -594,5 +608,12 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      */
     public Collection<String> getAdditionallySelectedFields() {
         return additionallySelectedFields;
+    }
+
+
+    private void buildTreeNodeAndCreateMetadataTable() {
+        treeNode = new DefaultTreeNode();
+        treeNode.setExpanded(true);
+        createMetadataTable();
     }
 }
