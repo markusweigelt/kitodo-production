@@ -110,7 +110,11 @@ public abstract class MetadataImportDialog {
                     .setDocType(firstProcess.getWorkpiece().getLogicalStructure().getType());
             Collection<Metadata> metadata = ImportService.importMetadata(firstProcess.getMetadataNodes(),
                     MdSec.DMD_SEC);
-            createProcessForm.getProcessMetadataTab().getProcessDetails().setMetadata(metadata);
+            if(additional) {
+                createProcessForm.getProcessMetadataTab().getProcessDetails().addMetadataIfNotExists(metadata);
+            } else {
+                createProcessForm.getProcessMetadataTab().getProcessDetails().setMetadata(metadata);
+            }
         }
     }
 }
