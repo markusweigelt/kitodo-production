@@ -11,6 +11,7 @@
 
 package org.kitodo.production.forms.createprocess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,6 +27,7 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportService;
 import org.omnifaces.util.Ajax;
 import org.primefaces.PrimeFaces;
+import org.w3c.dom.NodeList;
 
 public abstract class MetadataImportDialog {
 
@@ -102,15 +104,24 @@ public abstract class MetadataImportDialog {
      * on successful import.
      * @param processes list of TempProcess instances
      */
-    void fillCreateProcessForm(LinkedList<TempProcess> processes, boolean additional) {
+    void fillCreateProcessForm(LinkedList<TempProcess> processes) {
         this.createProcessForm.setProcesses(processes);
         if (processes.size() > 0 && processes.getFirst().getMetadataNodes().getLength() > 0) {
             TempProcess firstProcess = processes.getFirst();
-            this.createProcessForm.getProcessDataTab()
+            createProcessForm.getProcessDataTab()
                     .setDocType(firstProcess.getWorkpiece().getLogicalStructure().getType());
             Collection<Metadata> metadata = ImportService.importMetadata(firstProcess.getMetadataNodes(),
                     MdSec.DMD_SEC);
             createProcessForm.getProcessMetadataTab().getProcessDetails().setMetadata(metadata);
         }
     }
+
+    void fillMetadataIfNotExists(LinkedList<TempProcess> processes) {
+        if (processes.size() > 0 && processes.getFirst().getMetadataNodes().getLength() > 0) {
+            Collection<Metadata> metadata = ImportService.importMetadata(processes.getFirst().getMetadataNodes(),
+                    MdSec.DMD_SEC);
+            createProcessForm.getProcessMetadataTab().getProcessDetails().addMetadataIfNotExists(metadata);
+        }
+    }
+
 }

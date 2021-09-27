@@ -569,25 +569,25 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      *            metadata to overwrite with
      */
     public void setMetadata(Collection<Metadata> metadata) {
-        metadata.clear();
-        metadata.addAll(metadata);
+        this.metadata.clear();
+        this.metadata.addAll(metadata);
         buildTreeNodeAndCreateMetadataTable();
     }
 
     /**
      * Add the metadata of this fielded metadata.
      *
-     * @param metadata
-     *            metadata to add
+     * @param potentialMetadataItems
+     *            metadata to add if not exist
      */
-    public void addMetadataIfNotExists(Collection<Metadata> metadata) {
+    public void addMetadataIfNotExists(Collection<Metadata> potentialMetadataItems) {
         Collection<Metadata> metadataToAdd = new ArrayList<>();
-
-        metadata.stream().forEach( potentialMetadataItem -> {
-            if( this.metadata.stream().noneMatch(item -> item.getKey().equals(potentialMetadataItem.getKey()))) {
+        potentialMetadataItems.stream().forEach( potentialMetadataItem -> {
+            if( metadata.stream().noneMatch(item -> item.getKey().equals(potentialMetadataItem.getKey()))) {
                 metadataToAdd.add(potentialMetadataItem);
             }
         });
+        metadata.addAll(metadataToAdd);
 
         buildTreeNodeAndCreateMetadataTable();
     }

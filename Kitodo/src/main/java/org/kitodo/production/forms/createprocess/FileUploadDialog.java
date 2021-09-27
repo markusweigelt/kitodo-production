@@ -80,7 +80,7 @@ public class FileUploadDialog extends MetadataImportDialog {
                 }
             }
 
-            fillCreateProcessForm(processes, additionalImport);
+            fillCreateProcessForm(processes);
 
             showRecord();
         } catch (IOException | ProcessGenerationException | URISyntaxException | ParserConfigurationException

@@ -161,16 +161,16 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
                             opac, this.currentRecordId, projectId, templateId, numberOfChildren));
                 }
 
-                LinkedList<TempProcess> processes = new LinkedList<>(createProcessForm.getProcesses());
-                if(processes.size() == 0 || !additionalImport) {
-                    // import ancestors
-                    processes = ServiceManager.getImportService().importProcessHierarchy(
+                LinkedList<TempProcess> processes = ServiceManager.getImportService().importProcessHierarchy(
                             this.currentRecordId, opac, projectId, templateId, this.hitModel.getImportDepth(),
                             this.createProcessForm.getRulesetManagement().getFunctionalKeys(
                                     FunctionalMetadata.HIGHERLEVEL_IDENTIFIER));
-                }
 
-                fillCreateProcessForm(processes, additionalImport);
+                if( createProcessForm.getProcesses().size() > 0 && !additionalImport) {
+                    fillCreateProcessForm(processes);
+                } else {
+                    fillMetadataIfNotExists(processes);
+                }
 
                 String summary = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulSummary");
                 String detail = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulDetail",
