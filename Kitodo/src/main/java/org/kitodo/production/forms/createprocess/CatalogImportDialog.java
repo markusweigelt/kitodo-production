@@ -166,10 +166,10 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
                             this.createProcessForm.getRulesetManagement().getFunctionalKeys(
                                     FunctionalMetadata.HIGHERLEVEL_IDENTIFIER));
 
-                if( createProcessForm.getProcesses().size() > 0 && !additionalImport) {
-                    fillCreateProcessForm(processes);
+                if( createProcessForm.getProcesses().size() > 0 && additionalImport) {
+                    extendsMetadataTableOfMetadataTab(processes);
                 } else {
-                    fillMetadataIfNotExists(processes);
+                    fillCreateProcessForm(processes);
                 }
 
                 String summary = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulSummary");

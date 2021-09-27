@@ -116,7 +116,14 @@ public abstract class MetadataImportDialog {
         }
     }
 
-    void fillMetadataIfNotExists(LinkedList<TempProcess> processes) {
+    /**
+     * Add not existing metadata fields to metadata table with metadata values of first process in
+     * given list "processes" on successful import.
+     * 
+     * @param processes
+     *            The linked list of TempProcess instances
+     */
+    void extendsMetadataTableOfMetadataTab(LinkedList<TempProcess> processes) {
         if (processes.size() > 0 && processes.getFirst().getMetadataNodes().getLength() > 0) {
             Collection<Metadata> metadata = ImportService.importMetadata(processes.getFirst().getMetadataNodes(),
                     MdSec.DMD_SEC);
