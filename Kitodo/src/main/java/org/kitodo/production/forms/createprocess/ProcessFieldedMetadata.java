@@ -589,7 +589,19 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         });
         metadata.addAll(metadataToAdd);
 
+        TreeNode legacyTreenode = treeNode;
+
         buildTreeNodeAndCreateMetadataTable();
+        int index = 0;
+        for (TreeNode child : treeNode.getChildren()) {
+            ProcessDetail row = (ProcessDetail) child.getData();
+            Optional<TreeNode> treeNodeOptional = legacyTreenode.getChildren().stream().filter(legacyChild -> ((ProcessDetail) legacyChild.getData()).getMetadataID().equals(row.getMetadataID()) ).findFirst();
+            if( treeNodeOptional.isPresent() ){
+                treeNode.getChildren().set(index,treeNodeOptional.get());
+            }
+            index++;
+        }
+
     }
 
     /**
