@@ -14,7 +14,11 @@ package org.kitodo.production.forms.createprocess;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
@@ -76,7 +80,7 @@ public class FileUploadDialog extends MetadataImportDialog {
                 processes.add(parentProcess);
             }
 
-            if( createProcessForm.getProcesses().size() > 0 && additionalImport) {
+            if (createProcessForm.getProcesses().size() > 0 && additionalImport) {
                 extendsMetadataTableOfMetadataTab(processes);
             } else {
                 fillCreateProcessForm(processes);
@@ -157,7 +161,7 @@ public class FileUploadDialog extends MetadataImportDialog {
     }
 
     /**
-     * Checks the additional import
+     * Checks the additional import.
      * 
      * @return true if is additional import
      */
@@ -166,7 +170,7 @@ public class FileUploadDialog extends MetadataImportDialog {
     }
 
     /**
-     * Set additional import
+     * Set additional import.
      * 
      * @param additionalImport
      *            the value if is additional import
