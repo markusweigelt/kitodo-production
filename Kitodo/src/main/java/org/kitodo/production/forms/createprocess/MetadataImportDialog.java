@@ -125,9 +125,15 @@ public abstract class MetadataImportDialog {
      */
     void extendsMetadataTableOfMetadataTab(LinkedList<TempProcess> processes) {
         if (processes.size() > 0 && processes.getFirst().getMetadataNodes().getLength() > 0) {
-            Collection<Metadata> metadata = ImportService.importMetadata(processes.getFirst().getMetadataNodes(),
+            TempProcess firstProcess = processes.getFirst();
+            if (createProcessForm.getProcessDataTab().getDocType()
+                    .equals(firstProcess.getWorkpiece().getLogicalStructure().getType())) {
+                Collection<Metadata> metadata = ImportService.importMetadata(processes.getFirst().getMetadataNodes(),
                     MdSec.DMD_SEC);
-            createProcessForm.getProcessMetadataTab().getProcessDetails().addMetadataIfNotExists(metadata);
+                createProcessForm.getProcessMetadataTab().getProcessDetails().addMetadataIfNotExists(metadata);
+            } else {
+                Helper.setErrorMessage("Doctype does not match the doctype of process data tab.");
+            }
         }
     }
 

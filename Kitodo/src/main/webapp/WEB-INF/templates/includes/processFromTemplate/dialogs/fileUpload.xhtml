@@ -41,6 +41,10 @@
                             <p:ajax update="fileUploadForm"/>
                         </p:selectOneMenu>
                     </div>
+                    <div>
+                        <p:outputLabel for="additionalImport" value="#{msgs['newProcess.catalogueSearch.additionalImport']}"/>
+                        <p:selectBooleanCheckbox id="additionalImport" styleClass="switch input" value="#{CreateProcessForm.fileUploadDialog.additionalImport}" />
+                    </div>
                 </p:row>
             </p:panelGrid>
             <p:panelGrid>

@@ -62,25 +62,25 @@ public class FileUploadDialog extends MetadataImportDialog {
         UploadedFile uploadedFile = event.getFile();
         ImportService importService = ServiceManager.getImportService();
         try {
-            LinkedList<TempProcess> processes = new LinkedList<>(createProcessForm.getProcesses());
+            Document internalDocument = importService.convertDataRecordToInternal(
+                    createRecordFromXMLElement(IOUtils.toString(uploadedFile.getInputstream(), Charset.defaultCharset())),
+                    selectedCatalog, false);
+            TempProcess tempProcess = importService.createTempProcessFromDocument(internalDocument,
+                    createProcessForm.getTemplate().getId(), createProcessForm.getProject().getId());
 
-            if(processes.size() == 0 || !additionalImport ) {
-                Document internalDocument = importService.convertDataRecordToInternal(
-                        createRecordFromXMLElement(IOUtils.toString(uploadedFile.getInputstream(), Charset.defaultCharset())),
-                        selectedCatalog, false);
-                TempProcess tempProcess = importService.createTempProcessFromDocument(internalDocument,
-                        createProcessForm.getTemplate().getId(), createProcessForm.getProject().getId());
+            LinkedList<TempProcess> processes = new LinkedList<>();
+            processes.add(tempProcess);
 
-                processes = new LinkedList<>();
-                processes.add(tempProcess);
-
-                TempProcess parentProcess = extractParentRecordFromFile(uploadedFile, internalDocument);
-                if (Objects.nonNull(parentProcess)) {
-                    processes.add(parentProcess);
-                }
+            TempProcess parentProcess = extractParentRecordFromFile(uploadedFile, internalDocument);
+            if (Objects.nonNull(parentProcess)) {
+                processes.add(parentProcess);
             }
 
-            fillCreateProcessForm(processes);
+            if( createProcessForm.getProcesses().size() > 0 && additionalImport) {
+                extendsMetadataTableOfMetadataTab(processes);
+            } else {
+                fillCreateProcessForm(processes);
+            }
 
             showRecord();
         } catch (IOException | ProcessGenerationException | URISyntaxException | ParserConfigurationException
