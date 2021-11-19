@@ -31,6 +31,7 @@ import org.kitodo.production.dto.ClientDTO;
 import org.kitodo.production.dto.DocketDTO;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ClientSearchService;
+import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 
 public class DocketService extends ClientSearchService<Docket, DocketDTO, DocketDAO> {
@@ -80,9 +81,9 @@ public class DocketService extends ClientSearchService<Docket, DocketDTO, Docket
     }
 
     @Override
-    public List<DocketDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+    public List<DocketDTO> loadData(int first, int pageSize, Map<String, SortMeta> sortMetaMap, Map filters)
             throws DataException {
-        return findByQuery(getDocketsForCurrentUserQuery(), getSortBuilder(sortField, sortOrder), first, pageSize,
+        return findByQuery(getDocketsForCurrentUserQuery(), getSortBuilder(sortMetaMap), first, pageSize,
             false);
     }
 

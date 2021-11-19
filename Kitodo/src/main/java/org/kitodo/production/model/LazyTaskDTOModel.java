@@ -28,6 +28,7 @@ import org.kitodo.production.services.data.FilterService;
 import org.kitodo.production.services.data.TaskService;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.FilterMeta;
+import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 
 public class LazyTaskDTOModel extends LazyDTOModel {
@@ -52,9 +53,7 @@ public class LazyTaskDTOModel extends LazyDTOModel {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public List<Object> load(int first, int pageSize, String sortField, SortOrder sortOrder,
-            Map<String, FilterMeta> filters) {
+    public List<Object> load(int first, int pageSize, Map<String, SortMeta> sortMetaMap, Map<String, FilterMeta> filters) {
         if (indexRunning()) {
             try {
                 HashMap<String, String> filterMap = new HashMap<>();
@@ -63,7 +62,7 @@ public class LazyTaskDTOModel extends LazyDTOModel {
                 }
                 setRowCount(toIntExact(((TaskService)searchService).countResults(filterMap, this.onlyOwnTasks,
                         this.hideCorrectionTasks, this.showAutomaticTasks, this.taskStatusRestriction)));
-                entities = ((TaskService)searchService).loadData(first, pageSize, sortField, sortOrder, filterMap,
+                entities = ((TaskService)searchService).loadData(first, pageSize, sortMetaMap, filterMap,
                         this.onlyOwnTasks, this.hideCorrectionTasks, this.showAutomaticTasks,
                         this.taskStatusRestriction);
                 logger.trace("{} entities loaded!", entities.size());

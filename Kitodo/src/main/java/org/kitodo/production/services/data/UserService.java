@@ -52,7 +52,7 @@ import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.security.password.SecurityPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ClientSearchDatabaseService;
-import org.primefaces.model.SortOrder;
+import org.primefaces.model.SortMeta;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -132,7 +132,7 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
     }
 
     @Override
-    public List<User> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+    public List<User> loadData(int first, int pageSize, Map<String, SortMeta> sortMetaMap, Map filters) {
         HashMap<String, Object> filterMap;
         try {
             filterMap = ServiceManager.getFilterService().getSQLFilterMap(filters, User.class);
@@ -141,14 +141,14 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
         }
         String sqlFilterString = ServiceManager.getFilterService().mapToSQLFilterString(filterMap.keySet());
         if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewUserList()) {
-            return dao.getByQuery("FROM User WHERE deleted = 0" + sqlFilterString + getSort(sortField, sortOrder),
+            return dao.getByQuery("FROM User WHERE deleted = 0" + sqlFilterString + getSort(sortMetaMap),
                     filterMap, first, pageSize);
         }
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewUserList()) {
             filterMap.put(CLIENT_ID, getSessionClientId());
             return dao.getByQuery(
                 "SELECT u FROM User AS u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = 0"
-                        + sqlFilterString + getSort(sortField, sortOrder),
+                        + sqlFilterString + getSort(sortMetaMap),
                 filterMap, first, pageSize);
         }
         return new ArrayList<>();

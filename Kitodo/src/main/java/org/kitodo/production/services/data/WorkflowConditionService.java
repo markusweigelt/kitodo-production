@@ -19,7 +19,7 @@ import org.kitodo.data.database.beans.WorkflowCondition;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.WorkflowConditionDAO;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
-import org.primefaces.model.SortOrder;
+import org.primefaces.model.SortMeta;
 
 public class WorkflowConditionService extends SearchDatabaseService<WorkflowCondition, WorkflowConditionDAO> {
 
@@ -62,7 +62,7 @@ public class WorkflowConditionService extends SearchDatabaseService<WorkflowCond
     }
 
     @Override
-    public List<WorkflowCondition> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+    public List<WorkflowCondition> loadData(int first, int pageSize, Map<String, SortMeta> sortMetaMap, Map filters) {
         throw new UnsupportedOperationException();
     }
 }

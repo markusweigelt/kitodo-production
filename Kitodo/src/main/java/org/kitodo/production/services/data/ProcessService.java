@@ -150,6 +150,7 @@ import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.production.workflow.KitodoNamespaceContext;
 import org.kitodo.serviceloader.KitodoServiceLoader;
+import org.primefaces.model.SortMeta;
 import org.primefaces.model.charts.ChartData;
 import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearAxes;
 import org.primefaces.model.charts.bar.BarChartOptions;
@@ -332,29 +333,25 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     @Override
-    public List<ProcessDTO> loadData(int first, int pageSize, String sortField,
-            org.primefaces.model.SortOrder sortOrder, Map filters) throws DataException {
-        return loadData(first, pageSize, sortField, sortOrder, filters, false, false);
+    public List<ProcessDTO> loadData(int first, int pageSize, Map<String, SortMeta> sortMetaMap, Map filters) throws DataException {
+        return loadData(first, pageSize, sortMetaMap, filters, false, false);
     }
 
     /**
      * Load processes with given parameters.
      * @param first index of first process to load
      * @param pageSize number of processes to load
-     * @param sortField name of field by which processes are sorted
-     * @param sortOrder SortOrder by which processes are sorted - either ascending or descending
      * @param filters filter map
      * @param showClosedProcesses boolean controlling whether to load closed processes or not
      * @param showInactiveProjects boolean controlling whether to load processes of closed projects or not
      * @return List of loaded processes
      * @throws DataException if processes cannot be loaded from search index
      */
-    public List<ProcessDTO> loadData(int first, int pageSize, String sortField,
-                                     org.primefaces.model.SortOrder sortOrder, Map filters,
+    public List<ProcessDTO> loadData(int first, int pageSize, Map<String, SortMeta> sortMetaMap, Map filters,
                                      boolean showClosedProcesses, boolean showInactiveProjects) throws DataException {
         String filter = ServiceManager.getFilterService().parseFilterString(filters);
         return findByQuery(getQueryForFilter(showClosedProcesses, showInactiveProjects, filter),
-                getSortBuilder(sortField, sortOrder), first, pageSize, false);
+                getSortBuilder(sortMetaMap), first, pageSize, false);
     }
 
     /**

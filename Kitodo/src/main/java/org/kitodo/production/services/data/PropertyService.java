@@ -21,7 +21,7 @@ import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.PropertyDAO;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
-import org.primefaces.model.SortOrder;
+import org.primefaces.model.SortMeta;
 
 public class PropertyService extends SearchDatabaseService<Property, PropertyDAO> {
 
@@ -65,7 +65,7 @@ public class PropertyService extends SearchDatabaseService<Property, PropertyDAO
     }
 
     @Override
-    public List<Property> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+    public List<Property> loadData(int first, int pageSize, Map<String, SortMeta> sortMetaMap, Map filters) {
         return new ArrayList<>();
     }
 

@@ -39,7 +39,7 @@ import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.SortOrder;
+import org.primefaces.model.SortMeta;
 
 public class LazyDTOModel extends LazyDataModel<Object> {
 
@@ -81,21 +81,19 @@ public class LazyDTOModel extends LazyDataModel<Object> {
     }
 
     @Override
-    public Object getRowKey(Object inObject) {
+    public String getRowKey(Object inObject) {
         if (inObject instanceof BaseDTO) {
             BaseDTO dto = (BaseDTO) inObject;
-            return dto.getId();
+            return String.valueOf(dto.getId());
         } else if (inObject instanceof BaseBean) {
             BaseBean bean = (BaseBean) inObject;
-            return bean.getId();
+            return String.valueOf(bean.getId());
         }
-        return 0;
+        return String.valueOf(0);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public List<Object> load(int first, int pageSize, String sortField, SortOrder sortOrder,
-            Map<String, FilterMeta> filters) {
+    public List<Object> load(int first, int pageSize, Map<String, SortMeta> sortMetaMap, Map<String, FilterMeta> filters) {
         if (indexRunning()) {
             try {
                 HashMap<String, String> filterMap = new HashMap<>();
@@ -103,7 +101,7 @@ public class LazyDTOModel extends LazyDataModel<Object> {
                     filterMap.put(FilterService.FILTER_STRING, this.filterString);
                 }
                 setRowCount(toIntExact(searchService.countResults(filterMap)));
-                entities = searchService.loadData(first, pageSize, sortField, sortOrder, filterMap);
+                entities = searchService.loadData(first, pageSize, sortMetaMap, filterMap);
                 logger.info("{} entities loaded!", entities.size());
                 return entities;
             } catch (DAOException | DataException | ElasticsearchStatusException | QueryShardException

@@ -48,7 +48,7 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ClientSearchService;
-import org.primefaces.model.SortOrder;
+import org.primefaces.model.SortMeta;
 
 public class TemplateService extends ClientSearchService<Template, TemplateDTO, TemplateDAO> {
 
@@ -109,9 +109,9 @@ public class TemplateService extends ClientSearchService<Template, TemplateDTO, 
     }
 
     @Override
-    public List<TemplateDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+    public List<TemplateDTO> loadData(int first, int pageSize, Map<String, SortMeta> sortMetaMap, Map filters)
             throws DataException {
-        return findByQuery(createUserTemplatesQuery(filters), getSortBuilder(sortField, sortOrder), first, pageSize,
+        return findByQuery(createUserTemplatesQuery(filters), getSortBuilder(sortMetaMap), first, pageSize,
             false);
 
     }

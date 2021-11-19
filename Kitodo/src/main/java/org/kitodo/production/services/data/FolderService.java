@@ -26,7 +26,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.FolderDAO;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
-import org.primefaces.model.SortOrder;
+import org.primefaces.model.SortMeta;
 
 public class FolderService extends SearchDatabaseService<Folder, FolderDAO> {
 
@@ -48,7 +48,7 @@ public class FolderService extends SearchDatabaseService<Folder, FolderDAO> {
     }
 
     @Override
-    public List<Folder> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+    public List<Folder> loadData(int first, int pageSize, Map<String, SortMeta> sortMetaMap, Map filters) {
         return new ArrayList<>();
     }
 

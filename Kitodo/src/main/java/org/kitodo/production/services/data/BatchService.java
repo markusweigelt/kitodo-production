@@ -35,7 +35,7 @@ import org.kitodo.production.dto.BatchDTO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.TitleSearchService;
-import org.primefaces.model.SortOrder;
+import org.primefaces.model.SortMeta;
 
 public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> {
 
@@ -109,7 +109,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
     }
 
     @Override
-    public List<Batch> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+    public List<Batch> loadData(int first, int pageSize, Map<String, SortMeta> sortMetaMap, Map filters) {
         return new ArrayList<>();
     }
 

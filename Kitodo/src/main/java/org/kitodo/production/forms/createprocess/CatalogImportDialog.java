@@ -37,6 +37,7 @@ import org.kitodo.exceptions.ParameterNotFoundException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.exceptions.UnsupportedFormatException;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.SortHelper;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.model.LazyHitModel;
 import org.kitodo.production.services.ServiceManager;
@@ -102,7 +103,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
     public void search() {
         List<?> hits;
         try {
-            hits = hitModel.load(0, 10, null, SortOrder.ASCENDING, Collections.EMPTY_MAP);
+            hits = hitModel.load(0, 10, SortHelper.getSingleSortMeta("", SortOrder.ASCENDING), Collections.EMPTY_MAP);
         } catch (CatalogException e) {
             this.opacErrorMessage = e.getMessage();
             PrimeFaces.current().ajax().update("opacErrorDialog");

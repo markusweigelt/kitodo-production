@@ -19,6 +19,7 @@ import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.exceptions.DataException;
+import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 
 public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDAO<T>> {
@@ -42,16 +43,14 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      *            searched objects
      * @param pageSize
      *            size of page
-     * @param sortField
+     * @param sortMetaMap
      *            field by which data should be sorted
-     * @param sortOrder
-     *            order ascending or descending
      * @param filters
      *            for search query
      *
      * @return loaded data
      */
-    public abstract List loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+    public abstract List loadData(int first, int pageSize, Map<String, SortMeta> sortMetaMap, Map filters)
             throws DataException;
 
     /**
@@ -207,13 +206,17 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
         this.dao.refresh(baseBean);
     }
 
-    protected String getSort(String sortField, SortOrder sortOrder) {
-        if (!Objects.equals(sortField, null) && Objects.equals(sortOrder, SortOrder.ASCENDING)) {
-            return " ORDER BY " + sortField + " ASC";
-        } else if (!Objects.equals(sortField, null) && Objects.equals(sortOrder, SortOrder.DESCENDING)) {
-            return " ORDER BY " + sortField + " DESC";
-        } else {
-            return "";
+    protected String getSort(Map<String, SortMeta> sortMetaMap) {
+        if (!sortMetaMap.isEmpty()) {
+            SortMeta sortMeta = sortMetaMap.entrySet().iterator().next().getValue();
+            if (!Objects.equals(sortMeta.getField(), null)
+                    && Objects.equals(sortMeta.getOrder(), SortOrder.ASCENDING)) {
+                return " ORDER BY " + sortMeta.getField() + " ASC";
+            } else if (!Objects.equals(sortMeta.getField(), null)
+                    && Objects.equals(sortMeta.getOrder(), SortOrder.DESCENDING)) {
+                return " ORDER BY " + sortMeta.getField() + " DESC";
+            }
         }
+        return "";
     }
 }

@@ -20,7 +20,7 @@ import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.AuthorityDAO;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
-import org.primefaces.model.SortOrder;
+import org.primefaces.model.SortMeta;
 
 public class AuthorityService extends SearchDatabaseService<Authority, AuthorityDAO> {
 
@@ -95,9 +95,8 @@ public class AuthorityService extends SearchDatabaseService<Authority, Authority
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public List<Authority> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
-        return dao.getByQuery("FROM Authority"  + getSort(sortField, sortOrder), filters, first, pageSize);
+    public List<Authority> loadData(int first, int pageSize, Map<String, SortMeta> sortMetaMap, Map filters) {
+        return dao.getByQuery("FROM Authority"  + getSort(sortMetaMap), filters, first, pageSize);
     }
 
     /**

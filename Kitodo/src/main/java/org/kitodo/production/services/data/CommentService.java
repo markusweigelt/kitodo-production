@@ -20,7 +20,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.CommentDAO;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
-import org.primefaces.model.SortOrder;
+import org.primefaces.model.SortMeta;
 
 public class CommentService extends SearchDatabaseService<Comment, CommentDAO> {
 
@@ -53,7 +53,7 @@ public class CommentService extends SearchDatabaseService<Comment, CommentDAO> {
     }
 
     @Override
-    public List loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+    public List loadData(int first, int pageSize, Map<String, SortMeta> sortMetaMap, Map filters) {
         throw new UnsupportedOperationException();
     }
 

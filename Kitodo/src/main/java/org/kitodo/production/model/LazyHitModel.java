@@ -20,7 +20,9 @@ import java.util.stream.Collectors;
 import org.kitodo.api.externaldatamanagement.SearchResult;
 import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.production.services.ServiceManager;
+import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 
 public class LazyHitModel extends LazyDataModel<Object> {
@@ -39,13 +41,15 @@ public class LazyHitModel extends LazyDataModel<Object> {
         this.setSelectedCatalog(ServiceManager.getImportService().getDefaultCatalog());
     }
 
+
+
     @Override
     public Object getRowData(String rowKey) {
         return null;
     }
 
     @Override
-    public Object getRowKey(Object inObject) {
+    public String getRowKey(Object inObject) {
         return null;
     }
 
@@ -59,8 +63,7 @@ public class LazyHitModel extends LazyDataModel<Object> {
     }
 
     @Override
-    public List<Object> load(int first, int resultSize, String sortField, SortOrder sortOrder, Map filters) {
-
+    public List<Object> load(int first, int resultSize, Map<String, SortMeta> sortMetaMap, Map<String, FilterMeta> filters) {
         searchResult = ServiceManager.getImportService().performSearch(
                 this.selectedField, this.searchTerm, this.selectedCatalog, first, resultSize);
 

@@ -27,7 +27,7 @@ import org.kitodo.production.services.data.FilterService;
 import org.kitodo.production.services.data.ProcessService;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.FilterMeta;
-import org.primefaces.model.SortOrder;
+import org.primefaces.model.SortMeta;
 
 public class LazyProcessDTOModel extends LazyDTOModel {
 
@@ -85,9 +85,7 @@ public class LazyProcessDTOModel extends LazyDTOModel {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public List<Object> load(int first, int pageSize, String sortField, SortOrder sortOrder,
-            Map<String, FilterMeta> filters) {
+    public List<Object> load(int first, int pageSize, Map<String, SortMeta> sortMetaMap, Map<String, FilterMeta> filters) {
         if (indexRunning()) {
             try {
                 HashMap<String, String> filterMap = new HashMap<>();
@@ -96,7 +94,7 @@ public class LazyProcessDTOModel extends LazyDTOModel {
                 }
                 setRowCount(toIntExact(((ProcessService)searchService).countResults(filterMap, this.showClosedProcesses,
                         this.showInactiveProjects)));
-                entities = ((ProcessService)searchService).loadData(first, pageSize, sortField, sortOrder, filterMap,
+                entities = ((ProcessService)searchService).loadData(first, pageSize, sortMetaMap, filterMap,
                         this.showClosedProcesses, this.showInactiveProjects);
                 logger.trace("{} entities loaded!", entities.size());
                 return entities;

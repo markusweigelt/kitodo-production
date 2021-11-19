@@ -30,7 +30,7 @@ import org.kitodo.data.database.persistence.ListColumnDAO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
-import org.primefaces.model.SortOrder;
+import org.primefaces.model.SortMeta;
 
 public class ListColumnService extends SearchDatabaseService<ListColumn, ListColumnDAO> {
 
@@ -63,7 +63,7 @@ public class ListColumnService extends SearchDatabaseService<ListColumn, ListCol
     }
 
     @Override
-    public List loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+    public List loadData(int first, int pageSize, Map<String, SortMeta> sortMetaMap, Map filters) {
         throw new UnsupportedOperationException();
     }
 

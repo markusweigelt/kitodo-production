@@ -66,7 +66,7 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.ldap.LdapUser;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
-import org.primefaces.model.SortOrder;
+import org.primefaces.model.SortMeta;
 
 public class LdapServerService extends SearchDatabaseService<LdapServer, LdapServerDAO> {
 
@@ -107,7 +107,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
     }
 
     @Override
-    public List<LdapServer> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+    public List<LdapServer> loadData(int first, int pageSize, Map<String, SortMeta> sortMetaMap, Map filters) {
         return new ArrayList<>();
     }
 

@@ -43,7 +43,7 @@ import org.kitodo.production.dto.RulesetDTO;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ClientSearchService;
-import org.primefaces.model.SortOrder;
+import org.primefaces.model.SortMeta;
 
 public class RulesetService extends ClientSearchService<Ruleset, RulesetDTO, RulesetDAO> {
 
@@ -93,9 +93,9 @@ public class RulesetService extends ClientSearchService<Ruleset, RulesetDTO, Rul
     }
 
     @Override
-    public List<RulesetDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+    public List<RulesetDTO> loadData(int first, int pageSize, Map<String, SortMeta> sortMetaMap, Map filters)
             throws DataException {
-        return findByQuery(getRulesetsForCurrentUserQuery(), getSortBuilder(sortField, sortOrder), first, pageSize,
+        return findByQuery(getRulesetsForCurrentUserQuery(), getSortBuilder(sortMetaMap), first, pageSize,
             false);
     }
 

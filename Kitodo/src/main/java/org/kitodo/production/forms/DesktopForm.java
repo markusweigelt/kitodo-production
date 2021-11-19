@@ -13,7 +13,7 @@ package org.kitodo.production.forms;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 
 import javax.faces.view.ViewScoped;
@@ -31,6 +31,7 @@ import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.SortHelper;
 import org.kitodo.production.helper.WebDav;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
@@ -81,7 +82,8 @@ public class DesktopForm extends BaseForm {
     public List<TaskDTO> getTasks() {
         try {
             if (ServiceManager.getSecurityAccessService().hasAuthorityToViewTaskList() && taskList.isEmpty()) {
-                taskList = ServiceManager.getTaskService().loadData(0, 10, SORT_TITLE, SortOrder.ASCENDING, new HashMap<>());
+                taskList = ServiceManager.getTaskService().loadData(0, 10,
+                    SortHelper.getSingleSortMeta(SORT_TITLE, SortOrder.ASCENDING), Collections.EMPTY_MAP);
             }
         } catch (DataException | JsonException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.TASK.getTranslationPlural() }, logger,
@@ -98,7 +100,8 @@ public class DesktopForm extends BaseForm {
     public List<ProcessDTO> getProcesses() {
         try {
             if (ServiceManager.getSecurityAccessService().hasAuthorityToViewProcessList() && processList.isEmpty()) {
-                processList = ServiceManager.getProcessService().loadData(0, 10, SORT_ID, SortOrder.DESCENDING, null);
+                processList = ServiceManager.getProcessService().loadData(0, 10,
+                    SortHelper.getSingleSortMeta(SORT_ID, SortOrder.DESCENDING), Collections.EMPTY_MAP);
             }
         } catch (DataException | JsonException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROCESS.getTranslationPlural() },
@@ -115,7 +118,8 @@ public class DesktopForm extends BaseForm {
     public List<ProjectDTO> getProjects() {
         try {
             if (ServiceManager.getSecurityAccessService().hasAuthorityToViewProjectList() && projectList.isEmpty()) {
-                projectList = ServiceManager.getProjectService().loadData(0, 10, SORT_TITLE, SortOrder.ASCENDING, null);
+                projectList = ServiceManager.getProjectService().loadData(0, 10,
+                    SortHelper.getSingleSortMeta(SORT_TITLE, SortOrder.ASCENDING), Collections.EMPTY_MAP);
             }
         } catch (DataException | JsonException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROJECT.getTranslationPlural() },

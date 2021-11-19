@@ -53,7 +53,7 @@ import org.kitodo.production.enums.FilterString;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchService;
-import org.primefaces.model.SortOrder;
+import org.primefaces.model.SortMeta;
 
 /**
  * Service for Filter bean.
@@ -111,7 +111,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     }
 
     @Override
-    public List<Filter> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+    public List<Filter> loadData(int first, int pageSize, Map<String, SortMeta> sortMetaMap, Map filters) {
         return new ArrayList<>();
     }
 

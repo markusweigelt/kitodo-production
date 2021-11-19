@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -52,6 +53,7 @@ import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.CustomListColumnInitializer;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.SortHelper;
 import org.kitodo.production.process.ProcessValidator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.KitodoScriptService;
@@ -658,10 +660,9 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     private List<Process> getProcessesForActions() {
-        // TODO: find a way to pass filters
         List<ProcessDTO> filteredProcesses = new ArrayList<>();
-        for (Object object : lazyDTOModel.load(0, 100000, "",
-                SortOrder.ASCENDING, null)) {
+        for (Object object : lazyDTOModel.load(0, 100000, SortHelper.getSingleSortMeta("", SortOrder.ASCENDING),
+            Collections.EMPTY_MAP)) {
             if (object instanceof ProcessDTO) {
                 filteredProcesses.add((ProcessDTO) object);
             }

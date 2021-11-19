@@ -25,7 +25,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.RoleDAO;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ClientSearchDatabaseService;
-import org.primefaces.model.SortOrder;
+import org.primefaces.model.SortMeta;
 
 public class RoleService extends ClientSearchDatabaseService<Role, RoleDAO> {
 
@@ -83,14 +83,13 @@ public class RoleService extends ClientSearchDatabaseService<Role, RoleDAO> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public List<Role> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+    public List<Role> loadData(int first, int pageSize, Map<String, SortMeta> sortMetaMap, Map filters) {
         if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewRoleList()) {
-            return dao.getByQuery("FROM Role"  + getSort(sortField, sortOrder), filters, first, pageSize);
+            return dao.getByQuery("FROM Role"  + getSort(sortMetaMap), filters, first, pageSize);
         }
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewRoleList()) {
             return dao.getByQuery("SELECT r FROM Role AS r INNER JOIN r.client AS c WITH c.id = :clientId"
-                            + getSort(sortField, sortOrder),
+                            + getSort(sortMetaMap),
                 Collections.singletonMap(CLIENT_ID, ServiceManager.getUserService().getSessionClientId()), first,
                 pageSize);
         }

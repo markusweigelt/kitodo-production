@@ -31,7 +31,7 @@ import org.kitodo.production.dto.WorkflowDTO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ClientSearchService;
-import org.primefaces.model.SortOrder;
+import org.primefaces.model.SortMeta;
 
 public class WorkflowService extends ClientSearchService<Workflow, WorkflowDTO, WorkflowDAO> {
 
@@ -80,9 +80,9 @@ public class WorkflowService extends ClientSearchService<Workflow, WorkflowDTO, 
     }
 
     @Override
-    public List<WorkflowDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+    public List<WorkflowDTO> loadData(int first, int pageSize, Map<String, SortMeta> sortMetaMap, Map filters)
             throws DataException {
-        return findByQuery(getWorkflowsForCurrentUserQuery(), getSortBuilder(sortField, sortOrder), first, pageSize,
+        return findByQuery(getWorkflowsForCurrentUserQuery(), getSortBuilder(sortMetaMap), first, pageSize,
             false);
     }
 

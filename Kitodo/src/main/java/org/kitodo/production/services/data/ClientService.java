@@ -22,7 +22,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ClientDAO;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
-import org.primefaces.model.SortOrder;
+import org.primefaces.model.SortMeta;
 
 public class ClientService extends SearchDatabaseService<Client, ClientDAO> {
 
@@ -65,9 +65,8 @@ public class ClientService extends SearchDatabaseService<Client, ClientDAO> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public List<Client> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
-        return dao.getByQuery("FROM Client" + getSort(sortField, sortOrder), filters, first, pageSize);
+    public List<Client> loadData(int first, int pageSize, Map<String, SortMeta> sortMetaMap, Map filters) {
+        return dao.getByQuery("FROM Client" + getSort(sortMetaMap), filters, first, pageSize);
     }
 
     /**

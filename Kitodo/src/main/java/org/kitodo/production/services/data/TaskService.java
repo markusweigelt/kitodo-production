@@ -58,6 +58,7 @@ import org.kitodo.production.enums.GenerationMode;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SearchResultGeneration;
+import org.kitodo.production.helper.SortHelper;
 import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
@@ -70,7 +71,7 @@ import org.kitodo.production.services.data.base.ProjectSearchService;
 import org.kitodo.production.services.file.SubfolderFactoryService;
 import org.kitodo.production.services.image.ImageGenerator;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
-import org.primefaces.model.SortOrder;
+import org.primefaces.model.SortMeta;
 
 /**
  * The class provides a service for tasks. The service can be used to perform
@@ -185,36 +186,50 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     @Override
-    public List<TaskDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+    public List<TaskDTO> loadData(int first, int pageSize, Map<String, SortMeta> sortMetaMap, Map filters)
             throws DataException {
-        return loadData(first, pageSize, sortField, sortOrder, filters, false, false, false,
+        return loadData(first, pageSize, sortMetaMap, filters, false, false, false,
                 Arrays.asList(TaskStatus.OPEN, TaskStatus.INWORK));
     }
 
     /**
      * Load tasks with given parameters.
-     * @param first index of first task to load
-     * @param pageSize number of tasks to load
-     * @param sortField name of field by which tasks are sorted
-     * @param sortOrder SortOrder by which tasks are sorted - either ascending or descending
-     * @param filters filter map
-     * @param onlyOwnTasks boolean controlling whether to load only tasks assigned to current user or not
-     * @param hideCorrectionTasks boolean controlling whether to load correction tasks or not
-     * @param showAutomaticTasks boolean controlling whether to load automatic tasks or not
-     * @param taskStatus list of TaskStatus by which tasks are filtered
+     * 
+     * @param first
+     *            index of first task to load
+     * @param pageSize
+     *            number of tasks to load
+     * @param sortMetaMap
+     * @param filters
+     *            filter map
+     * @param onlyOwnTasks
+     *            boolean controlling whether to load only tasks assigned to current
+     *            user or not
+     * @param hideCorrectionTasks
+     *            boolean controlling whether to load correction tasks or not
+     * @param showAutomaticTasks
+     *            boolean controlling whether to load automatic tasks or not
+     * @param taskStatus
+     *            list of TaskStatus by which tasks are filtered
      * @return List of loaded tasks
-     * @throws DataException if tasks cannot be loaded from search index
+     * @throws DataException
+     *             if tasks cannot be loaded from search index
      */
-    public List<TaskDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters,
+    public List<TaskDTO> loadData(int first, int pageSize, Map<String, SortMeta> sortMetaMap, Map filters,
                                   boolean onlyOwnTasks, boolean hideCorrectionTasks, boolean showAutomaticTasks,
                                   List<TaskStatus> taskStatus)
             throws DataException {
-        if ("process.creationDate".equals(sortField)) {
-            sortField = "processForTask.creationDate";
+        if (!sortMetaMap.isEmpty()) {
+            Map.Entry<String, SortMeta> sortMetaEntry = sortMetaMap.entrySet().iterator().next();
+            SortMeta sortMeta = sortMetaEntry.getValue();
+            if ("process.creationDate".equals(sortMeta.getField())) {
+                sortMetaMap.put(sortMetaEntry.getKey(),
+                    SortMeta.builder().field("processForTask.creationDate").order(sortMeta.getOrder()).build());
+            }
         }
         String filter = ServiceManager.getFilterService().parseFilterString(filters);
         return findByQuery(createUserTaskQuery(filter, onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks,
-                taskStatus), getSortBuilder(sortField, sortOrder), first, pageSize, false);
+            taskStatus), getSortBuilder(sortMetaMap), first, pageSize, false);
     }
 
     /**
