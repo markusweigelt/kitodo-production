@@ -219,7 +219,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
                                   boolean onlyOwnTasks, boolean hideCorrectionTasks, boolean showAutomaticTasks,
                                   List<TaskStatus> taskStatus)
             throws DataException {
-        if (!sortMetaMap.isEmpty()) {
+        if (Objects.nonNull(sortMetaMap) && !sortMetaMap.isEmpty()) {
             Map.Entry<String, SortMeta> sortMetaEntry = sortMetaMap.entrySet().iterator().next();
             SortMeta sortMeta = sortMetaEntry.getValue();
             if ("process.creationDate".equals(sortMeta.getField())) {
