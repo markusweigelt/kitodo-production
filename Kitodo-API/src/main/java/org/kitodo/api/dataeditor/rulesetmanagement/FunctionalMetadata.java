@@ -41,6 +41,10 @@ public enum FunctionalMetadata {
      */
     DISPLAY_SUMMARY("displaySummary"),
 
+    TIMESTAMP_BEGIN("timestampBegin"),
+
+    TIMESTAMP_END("timestampEnd"),
+
     /**
      * The key of a higher-level data record in a hierarchical data structure of
      * 1:n relationships, which are stored from bottom to top.

@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
+import org.kitodo.dataeditor.ruleset.xml.Attribute;
 import org.kitodo.dataeditor.ruleset.xml.Key;
 import org.kitodo.dataeditor.ruleset.xml.Label;
 import org.kitodo.dataeditor.ruleset.xml.Option;
@@ -194,6 +195,13 @@ class KeyDeclaration extends Labeled {
         }
         return optionalKey.get().getOptions().parallelStream().map(option -> option.getValue())
                 .collect(Collectors.toSet());
+    }
+
+    Map<String, String> getAttributes() {
+        if (!optionalKey.isPresent()) {
+            return Collections.emptyMap();
+        }
+        return optionalKey.get().getAttributes().parallelStream().collect(Collectors.toMap(Attribute::getName, Attribute::getValue));
     }
 
     /**

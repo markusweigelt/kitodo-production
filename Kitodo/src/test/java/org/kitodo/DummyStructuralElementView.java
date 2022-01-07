@@ -54,6 +54,11 @@ public class DummyStructuralElementView implements StructuralElementViewInterfac
     }
 
     @Override
+    public Map<String, String> getAttributes() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public String getId() {
         throw new UnsupportedOperationException();
     }

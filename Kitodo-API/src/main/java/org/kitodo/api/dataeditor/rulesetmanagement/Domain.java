@@ -65,6 +65,12 @@ public enum Domain {
     @XmlEnumValue("technical")
     TECHNICAL,
 
+    @XmlEnumValue("timeInterval")
+    TIMEINTERVAL,
+
+    @XmlEnumValue("timestamp")
+    TIMESTAMP,
+
     /**
      * Metadata in this domain is stored outside the actual metadata container
      * directly in the description format. This area may only accept certain

@@ -37,6 +37,7 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.ProcessingNote;
@@ -152,6 +153,9 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
                 physicalDivisionsMap.get(smLink.getFrom()).add(divIDsToPhysicalDivisions.get(smLink.getTo()));
             }
         }
+
+        // get the struct map of time interval
+        //Optional<StructMapType> optionalPhysicalStructMapOfTimeIntervals = getStructMapsStreamByType(mets, "PHYSICAL").skip(1).findFirst();
         workpiece.setLogicalStructure(getStructMapsStreamByType(mets, "LOGICAL")
                 .map(structMap -> new DivXmlElementAccess(structMap.getDiv(), mets, physicalDivisionsMap, 1)).collect(Collectors.toList())
                 .iterator().next());
@@ -250,10 +254,18 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         mets.getStructMap().add(generatePhysicalStructMap(mediaFilesToIDFiles, physicalDivisionIDs, mets));
 
         LinkedList<Pair<String, String>> smLinkData = new LinkedList<>();
+
+        Map<LogicalDivision, String> logicalDivisionIDs = new HashMap<>();
         StructMapType logical = new StructMapType();
         logical.setTYPE("LOGICAL");
-        logical.setDiv(new DivXmlElementAccess(workpiece.getLogicalStructure()).toDiv(physicalDivisionIDs, smLinkData, mets));
+        logical.setDiv(new DivXmlElementAccess(workpiece.getLogicalStructure()).toDiv(logicalDivisionIDs,
+            physicalDivisionIDs, smLinkData, mets));
         mets.getStructMap().add(logical);
+
+        StructMapType physical = new StructMapType();
+        physical.setTYPE("PHYSICAL");
+        physical.setDiv(TimeIntervalXmlElementAccess.toDiv(workpiece.getLogicalStructure(), logicalDivisionIDs, smLinkData));
+        mets.getStructMap().add(physical);
 
         mets.setStructLink(createStructLink(smLinkData));
         return mets;

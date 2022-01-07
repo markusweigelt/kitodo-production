@@ -66,6 +66,9 @@ public class Key {
     @XmlElement(name = "option", namespace = "http://names.kitodo.org/ruleset/v2")
     private List<Option> options = new LinkedList<>();
 
+    @XmlElement(name = "attribute", namespace = "http://names.kitodo.org/ruleset/v2")
+    private List<Attribute> attributes = new LinkedList<>();
+
     /**
      * A pattern.
      */
@@ -234,5 +237,13 @@ public class Key {
      */
     public void setKeys(List<Key> keys) {
         this.keys = keys;
+    }
+
+    public List<Attribute> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(List<Attribute> attributes) {
+        this.attributes = attributes;
     }
 }

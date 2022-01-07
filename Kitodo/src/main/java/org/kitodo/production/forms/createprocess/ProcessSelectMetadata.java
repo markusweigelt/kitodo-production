@@ -125,6 +125,7 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
             entry.setKey(key);
             entry.setDomain(domain);
             entry.setValue(selectedItem);
+            entry.setAttributes(settings.getAttributes());
             metadata.add(entry);
         }
         return metadata;

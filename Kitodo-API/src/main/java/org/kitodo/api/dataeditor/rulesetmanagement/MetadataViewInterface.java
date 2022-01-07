@@ -11,6 +11,7 @@
 
 package org.kitodo.api.dataeditor.rulesetmanagement;
 
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -27,6 +28,8 @@ public interface MetadataViewInterface {
      * @return the domain
      */
     Optional<Domain> getDomain();
+
+    Map<String,String> getAttributes();
 
     /**
      * Returns the string used to encode this key in the metadata file.

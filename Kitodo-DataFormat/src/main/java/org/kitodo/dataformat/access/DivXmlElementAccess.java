@@ -47,6 +47,8 @@ import org.kitodo.dataformat.metskitodo.MdSecType.MdWrap.XmlData;
 import org.kitodo.dataformat.metskitodo.MetadataGroupType;
 import org.kitodo.dataformat.metskitodo.MetadataType;
 import org.kitodo.dataformat.metskitodo.Mets;
+import org.kitodo.dataformat.metskitodo.StructLinkType;
+import org.kitodo.dataformat.metskitodo.StructMapType;
 
 /**
  * The tree-like outline structure for digital representation. This structuring
@@ -112,7 +114,22 @@ public class DivXmlElementAccess extends LogicalDivision {
         for (Object mdSecType : div.getADMID()) {
             super.getMetadata().addAll(readMetadata((MdSecType) mdSecType, amdSecTypeOf(mets, (MdSecType) mdSecType)));
         }
+
+        // check for time intervals
+        /*
+        if (optionalPhysicalStructMapOfTimeIntervals.isPresent()) {
+            for (Object smLinkOrSmLinkGrp : mets.getStructLink().getSmLinkOrSmLinkGrp()) {
+                if (smLinkOrSmLinkGrp instanceof StructLinkType.SmLink) {
+                    StructLinkType.SmLink smLink = (StructLinkType.SmLink) smLinkOrSmLinkGrp;
+                    if( smLink.getFrom().equals(div.getID()) ){
+                        TimeIntervalXmlElementAccess.readMetadata(optionalPhysicalStructMapOfTimeIntervals.get().getDiv(), smLink.getTo());
+                    }
+                }
+            }
+        }
+         */
         metsReferrerId = div.getID();
+
         BigInteger order = div.getORDER();
         if (Objects.nonNull(order) && order.intValue() > 0) {
             setOrder(order.intValue());
@@ -126,6 +143,7 @@ public class DivXmlElementAccess extends LogicalDivision {
             getChildren().add(new DivXmlElementAccess(child, mets, physicalDivisionsMap, getOrder()));
         }
         super.setType(div.getTYPE());
+
         List<FileXmlElementAccess> fileXmlElementAccesses = physicalDivisionsMap.get(div.getID());
         if (Objects.nonNull(fileXmlElementAccesses)) {
             for (FileXmlElementAccess fileXmlElementAccess : fileXmlElementAccesses) {
@@ -237,9 +255,11 @@ public class DivXmlElementAccess extends LogicalDivision {
      *            the METS structure in which the metadata is added
      * @return a METS {@code <div>} element
      */
-    DivType toDiv(Map<PhysicalDivision, String> physicalDivisionIDs, LinkedList<Pair<String, String>> smLinkData, Mets mets) {
+    DivType toDiv(Map<LogicalDivision, String> logicalDivisionIDs, Map<PhysicalDivision, String> physicalDivisionIDs,
+            LinkedList<Pair<String, String>> smLinkData, Mets mets) {
         DivType div = new DivType();
         div.setID(metsReferrerId);
+        logicalDivisionIDs.put(this, metsReferrerId);
         if (!super.getContentIds().isEmpty()) {
             super.getContentIds().parallelStream().map(URI::toString).forEachOrdered(div.getCONTENTIDS()::add);
         }
@@ -269,7 +289,7 @@ public class DivXmlElementAccess extends LogicalDivision {
             MptrXmlElementAccess.addMptrToDiv(super.getLink(), div);
         }
         for (LogicalDivision subLogicalDivision : super.getChildren()) {
-            div.getDiv().add(new DivXmlElementAccess(subLogicalDivision).toDiv(physicalDivisionIDs, smLinkData, mets));
+            div.getDiv().add(new DivXmlElementAccess(subLogicalDivision).toDiv(logicalDivisionIDs, physicalDivisionIDs, smLinkData, mets));
         }
         return div;
     }

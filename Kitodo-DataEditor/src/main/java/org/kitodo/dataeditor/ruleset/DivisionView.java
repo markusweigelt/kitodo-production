@@ -85,4 +85,5 @@ class DivisionView extends NestedKeyView<DivisionDeclaration> implements Structu
     public Optional<String> getProcessTitle() {
         return declaration.getProcessTitle();
     }
+
 }

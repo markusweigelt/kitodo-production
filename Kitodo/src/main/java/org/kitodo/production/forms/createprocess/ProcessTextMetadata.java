@@ -84,6 +84,7 @@ public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serial
         entry.setKey(settings.getId());
         entry.setDomain(DOMAIN_TO_MDSEC.get(settings.getDomain().orElse(Domain.DESCRIPTION)));
         entry.setValue(value);
+        entry.setAttributes(settings.getAttributes());
         return Collections.singletonList(entry);
     }
 

@@ -13,6 +13,7 @@ package org.kitodo.dataeditor.ruleset;
 
 import java.util.List;
 import java.util.Locale.LanguageRange;
+import java.util.Map;
 
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 
@@ -106,4 +107,5 @@ abstract class AbstractKeyView<D extends Labeled> implements MetadataViewInterfa
     public boolean isUndefined() {
         return declaration.isUndefined();
     }
+    
 }

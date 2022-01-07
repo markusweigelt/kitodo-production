@@ -11,9 +11,12 @@
 
 package org.kitodo.api;
 
+import java.util.Map;
 import java.util.Objects;
 
 public class MetadataEntry extends Metadata {
+
+    private Map<String, String> attributes;
 
     /**
      * The value of the metadata.
@@ -39,7 +42,7 @@ public class MetadataEntry extends Metadata {
                 : MdSec.DMD_SEC)) {
             return false;
         }
-        return Objects.equals(value, other.value);
+        return Objects.equals(value, other.value) && Objects.equals(attributes, other.attributes);
     }
 
     @Override
@@ -74,5 +77,13 @@ public class MetadataEntry extends Metadata {
      */
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public Map<String, String> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(Map<String, String> attributes) {
+        this.attributes = attributes;
     }
 }

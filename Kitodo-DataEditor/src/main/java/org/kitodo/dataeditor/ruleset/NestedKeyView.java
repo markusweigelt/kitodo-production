@@ -19,6 +19,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale.LanguageRange;
+import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
@@ -473,5 +474,10 @@ class NestedKeyView<D extends KeyDeclaration> extends AbstractKeyView<D> impleme
     @Override
     public Optional<Domain> getDomain() {
         return declaration.getDomain();
+    }
+
+    @Override
+    public Map<String, String> getAttributes() {
+        return declaration.getAttributes();
     }
 }

@@ -261,4 +261,9 @@ class KeyView extends AbstractKeyView<KeyDeclaration> implements DatesSimpleMeta
     public Optional<Domain> getDomain() {
         return declaration.getDomain();
     }
+
+    @Override
+    public Map<String, String> getAttributes() {
+        return declaration.getAttributes();
+    }
 }

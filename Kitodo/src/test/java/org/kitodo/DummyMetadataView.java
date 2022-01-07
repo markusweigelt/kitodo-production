@@ -13,6 +13,7 @@ package org.kitodo;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.kitodo.api.Metadata;
@@ -47,6 +48,9 @@ public class DummyMetadataView implements ComplexMetadataViewInterface {
     public Optional<Domain> getDomain() {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public Map<String, String> getAttributes() { throw new UnsupportedOperationException(); }
 
     @Override
     public String getId() {

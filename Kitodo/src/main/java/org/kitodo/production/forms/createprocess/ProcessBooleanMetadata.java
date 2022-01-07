@@ -81,6 +81,7 @@ public class ProcessBooleanMetadata extends ProcessSimpleMetadata implements Ser
             entry.setKey(settings.getId());
             entry.setDomain(DOMAIN_TO_MDSEC.get(settings.getDomain().orElse(Domain.DESCRIPTION)));
             entry.setValue(value.get());
+            entry.setAttributes(settings.getAttributes());
             return Collections.singletonList(entry);
         } else {
             return Collections.emptyList();

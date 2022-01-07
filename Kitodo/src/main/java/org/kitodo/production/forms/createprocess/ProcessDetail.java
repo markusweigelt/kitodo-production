@@ -44,6 +44,8 @@ public abstract class ProcessDetail implements Serializable {
         DOMAIN_TO_MDSEC.put(Domain.RIGHTS, MdSec.RIGHTS_MD);
         DOMAIN_TO_MDSEC.put(Domain.SOURCE, MdSec.SOURCE_MD);
         DOMAIN_TO_MDSEC.put(Domain.TECHNICAL, MdSec.TECH_MD);
+        DOMAIN_TO_MDSEC.put(Domain.TIMEINTERVAL, MdSec.TIMEINTERVAL);
+        DOMAIN_TO_MDSEC.put(Domain.TIMESTAMP, MdSec.TIMESTAMP);
     }
 
     /**
