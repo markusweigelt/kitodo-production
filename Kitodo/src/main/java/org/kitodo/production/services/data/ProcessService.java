@@ -11,12 +11,8 @@
 
 package org.kitodo.production.services.data;
 
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-import static org.elasticsearch.index.query.QueryBuilders.multiMatchQuery;
-import static org.elasticsearch.index.query.QueryBuilders.nestedQuery;
-import static org.kitodo.data.database.enums.CorrectionComments.NO_CORRECTION_COMMENTS;
-import static org.kitodo.data.database.enums.CorrectionComments.NO_OPEN_CORRECTION_COMMENTS;
-import static org.kitodo.data.database.enums.CorrectionComments.OPEN_CORRECTION_COMMENTS;
+import static org.elasticsearch.index.query.QueryBuilders.*;
+import static org.kitodo.data.database.enums.CorrectionComments.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -1730,7 +1726,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     public String getBaseType(Process process) {
         try {
             URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(process);
-            return ServiceManager.getMetsService().getBaseType(metadataFilePath);
+            return ServiceManager.getMetsService().getBaseType(metadataFilePath, ServiceManager.getRulesetService().openRuleset(process.getRuleset()));
         } catch (IOException | IllegalArgumentException e) {
             logger.info("Could not determine base type for process {}: {}", process, e.getMessage());
             return "";

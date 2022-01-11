@@ -684,7 +684,7 @@ public class StructurePanel implements Serializable {
         addParentLinksRecursive(parent, tree);
         URI uri = ServiceManager.getProcessService().getMetadataFileUri(parent);
         try {
-            LogicalDivision logicalStructure = ServiceManager.getMetsService().loadWorkpiece(uri).getLogicalStructure();
+            LogicalDivision logicalStructure = ServiceManager.getMetsService().loadWorkpiece(uri, dataEditor.getRulesetManagement()).getLogicalStructure();
             List<LogicalDivision> logicalDivisionList
                     = MetadataEditor.determineLogicalDivisionPathToChild(logicalStructure, child.getId());
             DefaultTreeNode parentNode = tree;

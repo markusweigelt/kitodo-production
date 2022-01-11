@@ -147,7 +147,7 @@ public class TitleRecordLinkTab {
             return;
         }
         URI uri = ServiceManager.getProcessService().getMetadataFileUri(titleRecordProcess);
-        Workpiece workpiece = metsService.loadWorkpiece(uri);
+        Workpiece workpiece = metsService.loadWorkpiece(uri, createProcessForm.getRulesetManagement());
 
         RulesetManagementInterface ruleset = ServiceManager.getRulesetService()
                 .openRuleset(titleRecordProcess.getRuleset());
@@ -250,7 +250,7 @@ public class TitleRecordLinkTab {
         List<String> toolTip = new ArrayList<>();
         if (!summaryKeys.isEmpty()) {
 
-            Workpiece workpiece = metsService.loadWorkpiece(processService.getMetadataFileUri(linkedProcess));
+            Workpiece workpiece = metsService.loadWorkpiece(processService.getMetadataFileUri(linkedProcess), ruleset);
             LogicalDivision logicalStructure = workpiece.getLogicalStructure();
 
             final String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();

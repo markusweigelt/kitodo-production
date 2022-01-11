@@ -73,7 +73,7 @@ public class RulesetManagement implements RulesetManagementInterface {
 
     @Override
     public List<String> getFunctionalKeys(FunctionalMetadata functionalMetadata) {
-        return getIdsOfKeysForSpecialField(ruleset.getKeys(), functionalMetadata);
+        return getIdsOfKeysForSpecialField(ruleset.getKeys(), functionalMetadata, "");
     }
 
     @Override
@@ -114,22 +114,18 @@ public class RulesetManagement implements RulesetManagementInterface {
         return idsOfDivisionsForSpecialField;
     }
 
-    private List<String> getIdsOfKeysForSpecialField(List<Key> keys, FunctionalMetadata functionalMetadata) {
+    private List<String> getIdsOfKeysForSpecialField(List<Key> keys, FunctionalMetadata functionalMetadata, String prefix) {
         ArrayList<String> idsOfKeysForSpecialField = new ArrayList<>(1);
         for (Key key : keys) {
-            if (key.getKeys().isEmpty()) {
-                if (Objects.isNull(key.getUse())) {
-                    continue;
-                }
+            if (Objects.nonNull(key.getUse())) {
                 Set<FunctionalMetadata> uses = FunctionalMetadata.valuesOf(key.getUse());
                 if (uses.contains(functionalMetadata)) {
-                    idsOfKeysForSpecialField.add(key.getId());
+                    idsOfKeysForSpecialField.add(prefix + key.getId());
                 }
-            } else {
-                List<String> idsOfKeysOfKey = getIdsOfKeysForSpecialField(key.getKeys(), functionalMetadata);
-                for (String idOfKeyOfKey : idsOfKeysOfKey) {
-                    idsOfKeysForSpecialField.add(key.getId() + '@' + idOfKeyOfKey);
-                }
+            }
+
+            if (!key.getKeys().isEmpty()) {
+                idsOfKeysForSpecialField.addAll(getIdsOfKeysForSpecialField(key.getKeys(), functionalMetadata, key.getId() + "@"));
             }
         }
         return idsOfKeysForSpecialField;

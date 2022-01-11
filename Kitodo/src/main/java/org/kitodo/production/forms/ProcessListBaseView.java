@@ -132,7 +132,8 @@ public class ProcessListBaseView<T> extends BaseForm {
         for (Process selectedProcess : getSelectedProcesses()) {
             try {
                 URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(selectedProcess);
-                workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath);
+                workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath,
+                    ServiceManager.getRulesetService().openRuleset(selectedProcess.getRuleset()));
             } catch (IOException e) {
                 Helper.setErrorMessage(ERROR_LOADING_ONE,
                         new Object[] {ObjectType.PROCESS.getTranslationSingular(), selectedProcess.getId() }, logger, e);

@@ -29,11 +29,13 @@ import java.util.stream.StreamSupport;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
@@ -104,7 +106,9 @@ public class DivXmlElementAccess extends LogicalDivision {
      *            mets standard but is used in Kitodo internal data format. It helps to display logical and physical elements in an
      *            advanced combined tree.
      */
-    DivXmlElementAccess(DivType div, Mets mets, Map<String, List<FileXmlElementAccess>> physicalDivisionsMap, int parentOrder) {
+    DivXmlElementAccess(DivType div, Mets mets, Map<String, List<FileXmlElementAccess>> physicalDivisionsMap,
+            int parentOrder, RulesetManagementInterface rulesetManagement,
+            Optional<StructMapType> optionalPhysicalStructMapOfTimeIntervals) {
         super();
         div.getCONTENTIDS().parallelStream().map(URI::create).forEachOrdered(super.getContentIds()::add);
         super.setLabel(div.getLABEL());
@@ -116,18 +120,19 @@ public class DivXmlElementAccess extends LogicalDivision {
         }
 
         // check for time intervals
-        /*
         if (optionalPhysicalStructMapOfTimeIntervals.isPresent()) {
             for (Object smLinkOrSmLinkGrp : mets.getStructLink().getSmLinkOrSmLinkGrp()) {
                 if (smLinkOrSmLinkGrp instanceof StructLinkType.SmLink) {
                     StructLinkType.SmLink smLink = (StructLinkType.SmLink) smLinkOrSmLinkGrp;
                     if( smLink.getFrom().equals(div.getID()) ){
-                        TimeIntervalXmlElementAccess.readMetadata(optionalPhysicalStructMapOfTimeIntervals.get().getDiv(), smLink.getTo());
+                        super.getMetadata().addAll(TimeIntervalXmlElementAccess.readMetadata(
+                            optionalPhysicalStructMapOfTimeIntervals.get().getDiv(), smLink.getTo(),
+                            rulesetManagement));
                     }
                 }
             }
         }
-         */
+
         metsReferrerId = div.getID();
 
         BigInteger order = div.getORDER();
@@ -140,7 +145,8 @@ public class DivXmlElementAccess extends LogicalDivision {
         }
         super.setOrderlabel(div.getORDERLABEL());
         for (DivType child : div.getDiv()) {
-            getChildren().add(new DivXmlElementAccess(child, mets, physicalDivisionsMap, getOrder()));
+            getChildren().add(new DivXmlElementAccess(child, mets, physicalDivisionsMap, getOrder(), rulesetManagement,
+                    optionalPhysicalStructMapOfTimeIntervals));
         }
         super.setType(div.getTYPE());
 

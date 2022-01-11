@@ -80,7 +80,8 @@ public class MigrationService {
         try {
             metadataFilePath = fileService.getMetadataFilePath(process, true, true);
             ServiceManager.getDataEditorService().readData(metadataFilePath);
-            Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath);
+            Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath,
+                ServiceManager.getRulesetService().openRuleset(process.getRuleset()));
             workpiece.setId(process.getId().toString());
             ServiceManager.getMetsService().saveWorkpiece(workpiece, metadataFilePath);
         } catch (IOException e) {

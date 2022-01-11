@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.Workpiece;
 
 /**
@@ -50,7 +51,7 @@ public interface MetsXmlElementAccessInterface {
      * @throws IOException
      *             if the reading fails
      */
-    Workpiece read(InputStream in) throws IOException;
+    Workpiece read(InputStream in, RulesetManagementInterface rulesetManagement) throws IOException;
 
     /**
      * Writes the workpiece to a METS file.

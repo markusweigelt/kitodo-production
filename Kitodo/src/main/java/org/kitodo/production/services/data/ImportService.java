@@ -414,7 +414,8 @@ public class ImportService {
 
         if (OPACConfig.isPrestructuredImport(opac)) {
             // logical structure is created by import XSLT file!
-            Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(document);
+            Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(document,
+                ServiceManager.getRulesetService().openRuleset(process.getRuleset()));
             return new TempProcess(process, workpiece);
         } else {
             String docType = getRecordDocType(document);
@@ -526,7 +527,8 @@ public class ImportService {
                 } else {
                     logger.info("Process with ID '{}' already in database. Stop hierarchical import.", parentID);
                     URI workpieceUri = ServiceManager.getProcessService().getMetadataFileUri(parentProcess);
-                    Workpiece parentWorkpiece = ServiceManager.getMetsService().loadWorkpiece(workpieceUri);
+                    Workpiece parentWorkpiece = ServiceManager.getMetsService().loadWorkpiece(workpieceUri,
+                        ServiceManager.getRulesetService().openRuleset(parentProcess.getRuleset()));
                     this.parentTempProcess = new TempProcess(parentProcess, parentWorkpiece);
                     break;
                 }
@@ -553,7 +555,8 @@ public class ImportService {
         if (Objects.nonNull(parentProcess)) {
             logger.info("Linking last imported process to parent process with ID {} in database!", parentID);
             URI workpieceUri = ServiceManager.getProcessService().getMetadataFileUri(parentProcess);
-            Workpiece parentWorkpiece = ServiceManager.getMetsService().loadWorkpiece(workpieceUri);
+            Workpiece parentWorkpiece = ServiceManager.getMetsService().loadWorkpiece(workpieceUri,
+                ServiceManager.getRulesetService().openRuleset(parentProcess.getRuleset()));
             return new TempProcess(parentProcess, parentWorkpiece);
         }
         return null;
@@ -1026,7 +1029,8 @@ public class ImportService {
                 //  if metadataFileUri is null or no meta.xml can be found, the tempProcess has not
                 //  yet been saved to disk and contains the workpiece directly, instead!
                 URI metadataFileUri = ServiceManager.getProcessService().getMetadataFileUri(process);
-                Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFileUri);
+                Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFileUri,
+                    ServiceManager.getRulesetService().openRuleset(process.getRuleset()));
                 Collection<Metadata> metadata = workpiece.getLogicalStructure().getMetadata();
                 String processTitle = "[" + Helper.getTranslation("process") + " " + process.getId() + "]";
                 for (Metadata metadatum : metadata) {

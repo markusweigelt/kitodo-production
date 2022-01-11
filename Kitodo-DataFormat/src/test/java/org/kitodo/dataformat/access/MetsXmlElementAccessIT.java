@@ -38,6 +38,7 @@ import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.ProcessingNote;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.data.database.beans.Ruleset;
 
 public class MetsXmlElementAccessIT {
 
@@ -53,7 +54,7 @@ public class MetsXmlElementAccessIT {
     @Test
     public void testRead() throws Exception {
         Workpiece workpiece = new MetsXmlElementAccess()
-                .read(new FileInputStream(new File("src/test/resources/meta.xml")));
+                .read(new FileInputStream(new File("src/test/resources/meta.xml")), null);
 
         // METS file has 183 associated images
         assertEquals(183, workpiece.getPhysicalStructure().getChildren().size());
@@ -225,7 +226,7 @@ public class MetsXmlElementAccessIT {
         }
 
         // read the file and see if everything is in it
-        Workpiece reread = new MetsXmlElementAccess().read(new FileInputStream(new File("src/test/resources/out.xml")));
+        Workpiece reread = new MetsXmlElementAccess().read(new FileInputStream(new File("src/test/resources/out.xml")), null);
 
         assertEquals(1, reread.getEditHistory().size());
         List<PhysicalDivision> physicalDivisions = reread.getPhysicalStructure().getChildren();
@@ -252,7 +253,7 @@ public class MetsXmlElementAccessIT {
     @Test
     public void missingMetsHeaderCreationDateDidNotThrowNullPointerException() throws IOException {
         Workpiece workpiece = new MetsXmlElementAccess()
-                .read(new FileInputStream(new File("src/test/resources/meta_missing_createdate.xml")));
+                .read(new FileInputStream(new File("src/test/resources/meta_missing_createdate.xml")), null);
         assertNotNull(workpiece.getCreationDate());
     }
 }

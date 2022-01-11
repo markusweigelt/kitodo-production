@@ -41,6 +41,8 @@ public enum FunctionalMetadata {
      */
     DISPLAY_SUMMARY("displaySummary"),
 
+    TIME_INTERVAL("timeInterval"),
+
     TIMESTAMP_BEGIN("timestampBegin"),
 
     TIMESTAMP_END("timestampEnd"),

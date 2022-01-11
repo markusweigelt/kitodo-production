@@ -97,13 +97,14 @@ public class MetadataValidation implements MetadataValidationInterface {
             Map<String, String> translations) {
         try {
             FileManagementInterface fileManagement = getFileManagement();
-            Workpiece workpiece;
-            try (InputStream inputStream = fileManagement.read(metsFileUri)) {
-                workpiece = createMetsXmlElementAccess().read(inputStream);
-            }
+
             RulesetManagementInterface ruleset = getRulesetManagement();
             ruleset.load(new File(rulesetFileUri.getPath()));
 
+            Workpiece workpiece;
+            try (InputStream inputStream = fileManagement.read(metsFileUri)) {
+                workpiece = createMetsXmlElementAccess().read(inputStream, ruleset);
+            }
             return validate(workpiece, ruleset, metadataLanguage, translations);
         } catch (IOException e) {
             throw new UncheckedIOException(e);

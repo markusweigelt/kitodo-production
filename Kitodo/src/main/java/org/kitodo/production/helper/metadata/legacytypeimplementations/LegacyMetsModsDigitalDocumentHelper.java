@@ -162,7 +162,7 @@ public class LegacyMetsModsDigitalDocumentHelper {
     @Deprecated
     public void read(String path) throws IOException {
         URI uri = new File(path).toURI();
-        workpiece = ServiceManager.getMetsService().loadWorkpiece(uri);
+        workpiece = ServiceManager.getMetsService().loadWorkpiece(uri, ruleset);
     }
 
     @Deprecated

@@ -37,12 +37,14 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.ProcessingNote;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
+import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.FileType;
 import org.kitodo.dataformat.metskitodo.Mets;
@@ -105,7 +107,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      * @param mets
      *            METS XML structure to read
      */
-    private MetsXmlElementAccess(Mets mets) {
+    private MetsXmlElementAccess(Mets mets, RulesetManagementInterface rulesetManagement) {
         this();
         MetsHdr metsHdr = mets.getMetsHdr();
         if (Objects.nonNull(metsHdr)) {
@@ -155,9 +157,9 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         }
 
         // get the struct map of time interval
-        //Optional<StructMapType> optionalPhysicalStructMapOfTimeIntervals = getStructMapsStreamByType(mets, "PHYSICAL").skip(1).findFirst();
+        Optional<StructMapType> optionalPhysicalStructMapOfTimeIntervals = getStructMapsStreamByType(mets, "PHYSICAL").skip(1).findFirst();
         workpiece.setLogicalStructure(getStructMapsStreamByType(mets, "LOGICAL")
-                .map(structMap -> new DivXmlElementAccess(structMap.getDiv(), mets, physicalDivisionsMap, 1)).collect(Collectors.toList())
+                .map(structMap -> new DivXmlElementAccess(structMap.getDiv(), mets, physicalDivisionsMap, 1, rulesetManagement, optionalPhysicalStructMapOfTimeIntervals)).collect(Collectors.toList())
                 .iterator().next());
     }
 
@@ -197,12 +199,12 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      *            InputStream to read from
      */
     @Override
-    public Workpiece read(InputStream in) throws IOException {
+    public Workpiece read(InputStream in, RulesetManagementInterface rulesetManagement) throws IOException {
         try {
             JAXBContext jc = JAXBContextCache.getInstance().get(Mets.class);
             Unmarshaller unmarshaller = jc.createUnmarshaller();
             Mets mets = (Mets) unmarshaller.unmarshal(in);
-            return new MetsXmlElementAccess(mets).workpiece;
+            return new MetsXmlElementAccess(mets, rulesetManagement).workpiece;
         } catch (JAXBException e) {
             if (e.getCause() instanceof IOException) {
                 throw (IOException) e.getCause();

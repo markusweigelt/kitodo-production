@@ -438,7 +438,8 @@ public class KitodoScriptService {
 
         for (Process process : processes) {
             URI metadataFileUri = processService.getMetadataFileUri(process);
-            Workpiece workpiece = metsService.loadWorkpiece(metadataFileUri);
+            Workpiece workpiece = metsService.loadWorkpiece(metadataFileUri,
+                ServiceManager.getRulesetService().openRuleset(process.getRuleset()));
             fileService.searchForMedia(process, workpiece);
             metsService.saveWorkpiece(workpiece, metadataFileUri);
         }

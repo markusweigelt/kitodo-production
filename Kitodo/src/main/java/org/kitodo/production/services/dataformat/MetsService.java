@@ -29,6 +29,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MetadataEntry;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.MetsXmlElementAccessInterface;
@@ -62,7 +63,7 @@ public class MetsService {
     }
 
     private MetsService() {
-        metsXmlElementAccess = (MetsXmlElementAccessInterface) new KitodoServiceLoader<>(
+        metsXmlElementAccess = new KitodoServiceLoader<>(
                 MetsXmlElementAccessInterface.class).loadModule();
     }
 
@@ -77,8 +78,8 @@ public class MetsService {
      *             if the file cannot be read (for example, because the file was
      *             not found)
      */
-    public String getBaseType(URI uri) throws IOException {
-        LogicalDivision logicalDivision = loadWorkpiece(uri).getLogicalStructure();
+    public String getBaseType(URI uri, RulesetManagementInterface rulesetManagement) throws IOException {
+        LogicalDivision logicalDivision = loadWorkpiece(uri, rulesetManagement).getLogicalStructure();
         String type = logicalDivision.getType();
         while (Objects.isNull(type) && !logicalDivision.getChildren().isEmpty()) {
             logicalDivision = logicalDivision.getChildren().get(0);
@@ -86,6 +87,12 @@ public class MetsService {
         }
         return type;
     }
+
+/*
+    public Workpiece loadWorkpiece(URI uri) throws IOException {
+        return loadWorkpiece(uri, null);
+    }
+*/
 
     /**
      * Function for loading METS files from URI.
@@ -96,12 +103,17 @@ public class MetsService {
      * @throws IOException
      *             if reading is not working (disk broken, ...)
      */
-    public Workpiece loadWorkpiece(URI uri) throws IOException {
+    public Workpiece loadWorkpiece(URI uri, RulesetManagementInterface rulesetManagement) throws IOException {
         try (InputStream inputStream = ServiceManager.getFileService().read(uri)) {
             logger.info("Reading {}", uri.toString());
-            return metsXmlElementAccess.read(inputStream);
+            return metsXmlElementAccess.read(inputStream, rulesetManagement);
         }
     }
+
+    /*
+    public Workpiece loadWorkpiece(Document document) throws TransformerException, IOException {
+        return loadWorkpiece(document, null);
+    }*/
 
     /**
      * Create and return Workpiece from given Document 'document'.
@@ -113,13 +125,13 @@ public class MetsService {
      * @throws IOException
      *          thrown when unable to read inputStream
      */
-    public Workpiece loadWorkpiece(Document document) throws TransformerException, IOException {
+    public Workpiece loadWorkpiece(Document document, RulesetManagementInterface rulesetManagement) throws TransformerException, IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Source xmlSource = new DOMSource(document);
         Result outputTarget = new StreamResult(outputStream);
         TransformerFactory.newInstance().newTransformer().transform(xmlSource, outputTarget);
         InputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-        return metsXmlElementAccess.read(inputStream);
+        return metsXmlElementAccess.read(inputStream, rulesetManagement);
     }
 
     /**

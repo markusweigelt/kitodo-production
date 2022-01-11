@@ -301,8 +301,8 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     private void openMetsFile() throws IOException, InvalidImagesException {
         mainFileUri = ServiceManager.getProcessService().getMetadataFileUri(process);
-        workpiece = ServiceManager.getMetsService().loadWorkpiece(mainFileUri);
-        workpieceOriginalState = ServiceManager.getMetsService().loadWorkpiece(mainFileUri);
+        workpiece = ServiceManager.getMetsService().loadWorkpiece(mainFileUri, ruleset);
+        workpieceOriginalState = ServiceManager.getMetsService().loadWorkpiece(mainFileUri, ruleset);
         if (Objects.isNull(workpiece.getId())) {
             logger.warn("Workpiece has no ID. Cannot verify workpiece ID. Setting workpiece ID.");
             workpiece.setId(process.getId().toString());

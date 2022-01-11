@@ -46,7 +46,7 @@ public enum MdSec {
      */
     TECH_MD,
 
-    TIMEINTERVAL,
+    TIME_INTERVAL,
 
     TIMESTAMP;
 }

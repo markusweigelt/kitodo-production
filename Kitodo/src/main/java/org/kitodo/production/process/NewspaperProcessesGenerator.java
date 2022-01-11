@@ -318,7 +318,8 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         final long begin = System.nanoTime();
 
         overallMetadataFileUri = processService.getMetadataFileUri(overallProcess);
-        overallWorkpiece = metsService.loadWorkpiece(overallMetadataFileUri);
+        overallWorkpiece = metsService.loadWorkpiece(overallMetadataFileUri,
+            ServiceManager.getRulesetService().openRuleset(overallProcess.getRuleset()));
 
         initializeRulesetFields(overallWorkpiece.getLogicalStructure().getType());
 
@@ -690,7 +691,8 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
             Process linkedProcess = processService
                     .getById(processService.processIdFromUri(firstLevelChildLink.getUri()));
             URI metadataFileUri = processService.getMetadataFileUri(linkedProcess);
-            Workpiece workpiece = metsService.loadWorkpiece(metadataFileUri);
+            Workpiece workpiece = metsService.loadWorkpiece(metadataFileUri,
+                ServiceManager.getRulesetService().openRuleset(linkedProcess.getRuleset()));
             String yearMetadataEntry = null;
             if (yearSimpleMetadataView.getId().equals("ORDERLABEL")) {
                 yearMetadataEntry = workpiece.getLogicalStructure().getOrderlabel();

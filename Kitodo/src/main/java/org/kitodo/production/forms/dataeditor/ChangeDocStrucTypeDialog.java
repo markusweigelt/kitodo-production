@@ -150,7 +150,7 @@ public class ChangeDocStrucTypeDialog {
     private Map<String, String> getAllowedChildTypesFromParentalProcess() throws IOException {
         URI parentMetadataUri = ServiceManager.getProcessService()
                 .getMetadataFileUri(dataEditor.getProcess().getParent());
-        LogicalDivision parentLogicalStructure = ServiceManager.getMetsService().loadWorkpiece(parentMetadataUri)
+        LogicalDivision parentLogicalStructure = ServiceManager.getMetsService().loadWorkpiece(parentMetadataUri, dataEditor.getRulesetManagement())
                 .getLogicalStructure();
         List<LogicalDivision> parentHierarchyPath = MetadataEditor
                 .determineLogicalDivisionPathToChild(parentLogicalStructure,

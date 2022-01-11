@@ -86,7 +86,7 @@ public class SearchDialog {
     public void copyMetadata() {
         try {
             URI metadataUri = ServiceManager.getProcessService().getMetadataFileUri(this.originalProcess);
-            Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataUri);
+            Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataUri, createProcessForm.getRulesetManagement());
             LogicalDivision root = workpiece.getLogicalStructure();
             if (StringUtils.isNotBlank(root.getType())) {
                 this.createProcessForm.getProcessDataTab().setDocType(root.getType());
