@@ -110,7 +110,8 @@ public class NewspaperMigrationTaskIT {
         Assert.assertEquals("should have completed", 100, underTest.getProgress());
 
         Workpiece workpiece = ServiceManager.getMetsService()
-                .loadWorkpiece(processService.getMetadataFileUri(issueOne));
+                .loadWorkpiece(processService.getMetadataFileUri(issueOne),
+                    ServiceManager.getRulesetService().openRuleset(issueOne.getRuleset()));
         LogicalDivision logicalStructure = workpiece.getLogicalStructure();
         Assert.assertEquals("should have modified METS file", "NewspaperMonth", logicalStructure.getType());
         Assert.assertEquals("should have added date for month", "1850-03", logicalStructure.getOrderlabel());

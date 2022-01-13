@@ -274,7 +274,9 @@ public class SchemaService {
         link.setLoctype("URL");
         String uriWithVariables = process.getProject().getMetsPointerPath();
         Workpiece workpiece = uriWithVariables.contains("$(meta.") ? ServiceManager.getMetsService()
-                .loadWorkpiece(ServiceManager.getProcessService().getMetadataFileUri(process)) : null;
+                .loadWorkpiece(ServiceManager.getProcessService().getMetadataFileUri(process),
+                    ServiceManager.getRulesetService().openRuleset(process.getRuleset()))
+                : null;
         VariableReplacer variableReplacer = new VariableReplacer(workpiece, process, null);
         String linkUri = variableReplacer.replace(uriWithVariables);
         link.setUri(URI.create(linkUri));
@@ -283,7 +285,9 @@ public class SchemaService {
 
     private void copyLabelAndOrderlabel(Process source, LogicalDivision destination) throws IOException {
         URI sourceMetadataUri = processService.getMetadataFileUri(source);
-        LogicalDivision sourceRoot = metsService.loadWorkpiece(sourceMetadataUri).getLogicalStructure();
+        LogicalDivision sourceRoot = metsService
+                .loadWorkpiece(sourceMetadataUri, ServiceManager.getRulesetService().openRuleset(source.getRuleset()))
+                .getLogicalStructure();
         if (Objects.isNull(destination.getLabel())) {
             destination.setLabel(sourceRoot.getLabel());
         }

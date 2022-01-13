@@ -27,6 +27,8 @@ import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProcessDTO;
@@ -169,15 +171,18 @@ public class SearchResultGeneration {
         int numberOfProcessStructuralElements = 0;
         int numberOfProcessMetadata = 0;
         try {
-            metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(processDTO);
-            Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath);
+            Process process = ServiceManager.getProcessService().getById(processDTO.getId());
+            metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(process);
+            Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath,
+                ServiceManager.getRulesetService().openRuleset(process.getRuleset()));
             numberOfProcessImages = (int) Workpiece.treeStream(workpiece.getPhysicalStructure())
                     .filter(physicalDivision -> Objects.equals(physicalDivision.getType(), PhysicalDivision.TYPE_PAGE)).count();
             numberOfProcessStructuralElements = (int) Workpiece.treeStream(workpiece.getLogicalStructure()).count();
             numberOfProcessMetadata = Math.toIntExact(MetsService.countLogicalMetadata(workpiece));
-
         } catch (IOException e) {
             logger.debug("Metadata file not found for process with id: {}", processDTO.getId());
+        } catch (DAOException e) {
+            logger.debug("Process with id {} could not be found", processDTO.getId());
         }
 
         row.createCell(3).setCellValue(numberOfProcessImages);

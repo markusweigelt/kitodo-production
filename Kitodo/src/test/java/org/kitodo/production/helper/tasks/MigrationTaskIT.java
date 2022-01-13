@@ -12,10 +12,8 @@
 package org.kitodo.production.helper.tasks;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
@@ -24,6 +22,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.config.ConfigCore;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
@@ -60,11 +59,13 @@ public class MigrationTaskIT {
         migrationTask.join();
         Assert.assertFalse(migrationTask.isAlive());
         Assert.assertEquals(100, migrationTask.getProgress());
+        Process process = processService.getById(2);
         Assert.assertNotNull("Process migration failed",
-            metsService.loadWorkpiece(processService.getMetadataFileUri(processService.getById(2))));
+            metsService.loadWorkpiece(processService.getMetadataFileUri(process),
+                ServiceManager.getRulesetService().openRuleset(process.getRuleset())));
     }
 
-    private static void moveMetaFileAway(int recordNumber, String tempFileName) throws Exception {
+    private static void moveMetaFileAway(int recordNumber, String tempFileName) {
         File processHome = new File(ConfigCore.getKitodoDataDirectory(), Integer.toString(recordNumber));
         new File(processHome, "meta.xml").renameTo(new File(processHome, tempFileName));
     }

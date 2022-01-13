@@ -32,6 +32,7 @@ import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.ProcessGenerationException;
@@ -208,7 +209,8 @@ public class HierarchyMigrationTask extends EmptyTask {
     private static Optional<String> getParentRecordId(Process process) throws IOException {
         URI metadataFilePath = fileService.getMetadataFilePath(process);
         URI anchorFilePath = fileService.createAnchorFile(metadataFilePath);
-        Workpiece anchorWorkpiece = metsService.loadWorkpiece(anchorFilePath);
+        Workpiece anchorWorkpiece = metsService.loadWorkpiece(anchorFilePath,
+            ServiceManager.getRulesetService().openRuleset(process.getRuleset()));
         Optional<String> parentRecordId = anchorWorkpiece.getLogicalStructure().getMetadata().parallelStream()
                 .filter(metadata -> metadata.getKey().equals("CatalogIDDigital"))
                 .filter(MetadataEntry.class::isInstance).map(MetadataEntry.class::cast).map(MetadataEntry::getValue)
@@ -241,14 +243,15 @@ public class HierarchyMigrationTask extends EmptyTask {
         ArrayList<Integer> parentData = new ArrayList<>();
         parentData.add(parentProcess.getId());
         URI metadataFilePath = fileService.getMetadataFilePath(childProcess);
-        parentData.add(convertChildMetsFile(metadataFilePath));
+        parentData.add(convertChildMetsFile(metadataFilePath, childProcess.getRuleset()));
         linkParentProcessWithChildProcess(parentProcess, childProcess);
         return parentData;
     }
 
     private void checkTaskAndId(Process parentProcess) throws IOException {
         URI parentMetadataFilePath = fileService.getMetadataFilePath(parentProcess, true, true);
-        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(parentMetadataFilePath);
+        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(parentMetadataFilePath,
+            ServiceManager.getRulesetService().openRuleset(parentProcess.getRuleset()));
         ProcessService.checkTasks(parentProcess, workpiece.getLogicalStructure().getType());
         Collection<Metadata> metadata = workpiece.getLogicalStructure().getMetadata();
         String shortedTitle = "";
@@ -304,7 +307,8 @@ public class HierarchyMigrationTask extends EmptyTask {
     private void createParentMetsFile(Process process) throws IOException {
         URI metadataFileUri = fileService.getMetadataFilePath(process);
         URI anchorFileUri = fileService.createAnchorFile(metadataFileUri);
-        Workpiece workpiece = metsService.loadWorkpiece(anchorFileUri);
+        Workpiece workpiece = metsService.loadWorkpiece(anchorFileUri,
+            ServiceManager.getRulesetService().openRuleset(process.getRuleset()));
         LogicalDivision firstChild = workpiece.getLogicalStructure().getChildren().get(0);
         firstChild.setType(null);
         LinkedMetsResource link = firstChild.getLink();
@@ -320,10 +324,13 @@ public class HierarchyMigrationTask extends EmptyTask {
      *
      * @param metadataFilePath
      *            URI of the metadata file
+     * @param ruleset
+     *            Ruleset of child process
      * @return the current number, may be {@code null}
      */
-    private static Integer convertChildMetsFile(URI metadataFilePath) throws IOException {
-        Workpiece workpiece = metsService.loadWorkpiece(metadataFilePath);
+    private static Integer convertChildMetsFile(URI metadataFilePath, Ruleset ruleset) throws IOException {
+        Workpiece workpiece = metsService.loadWorkpiece(metadataFilePath,
+            ServiceManager.getRulesetService().openRuleset(ruleset));
         LogicalDivision childStructureRoot = workpiece.getLogicalStructure().getChildren().get(0);
         workpiece.setLogicalStructure(childStructureRoot);
         metsService.saveWorkpiece(workpiece, metadataFilePath);
@@ -367,7 +374,7 @@ public class HierarchyMigrationTask extends EmptyTask {
             throws IOException, DAOException {
 
         URI metadataFilePath = fileService.getMetadataFilePath(childProcess);
-        Integer currentNo = convertChildMetsFile(metadataFilePath);
+        Integer currentNo = convertChildMetsFile(metadataFilePath, childProcess.getRuleset());
         Process parentProcess = processService.getById(parentData.get(0));
         int insertionPosition = calculateInsertionPosition(parentData, currentNo);
         MetadataEditor.addLink(parentProcess, Integer.toString(insertionPosition), childProcess.getId());

@@ -146,8 +146,11 @@ public class NewspaperProcessesGeneratorIT {
      *            issue, which is two levels below the logical structure.
      */
     private String readProcessTitleFromMetadata(int processId, boolean issue) throws DAOException, IOException {
+        Process process = processService.getById(processId);
         LogicalDivision logicalStructure = metsService
-                .loadWorkpiece(processService.getMetadataFileUri(processService.getById(processId))).getLogicalStructure();
+                .loadWorkpiece(processService.getMetadataFileUri(process),
+                    ServiceManager.getRulesetService().openRuleset(process.getRuleset()))
+                .getLogicalStructure();
         LogicalDivision logicalDivision = issue
                 ? logicalStructure.getChildren().get(0).getChildren().get(0)
                 : logicalStructure;
@@ -170,7 +173,8 @@ public class NewspaperProcessesGeneratorIT {
         // Set base type in metadata/10/meta.xml to "Season"
         Process seasonProcess = ServiceManager.getProcessService().getById(10);
         URI seasonUri = processService.getMetadataFileUri(seasonProcess);
-        Workpiece seasonMets = metsService.loadWorkpiece(seasonUri);
+        Workpiece seasonMets = metsService.loadWorkpiece(seasonUri,
+            ServiceManager.getRulesetService().openRuleset(seasonProcess.getRuleset()));
         seasonMets.getLogicalStructure().setType("Season");
         metsService.saveWorkpiece(seasonMets, seasonUri);
 
@@ -189,7 +193,8 @@ public class NewspaperProcessesGeneratorIT {
         for (Process process : processService.getAll()) {
             if (Objects.nonNull(process.getParent()) && !process.getChildren().isEmpty()) {
                 URI saisonYearProcessMetadataUri = processService.getMetadataFileUri(process);
-                Workpiece workpiece = metsService.loadWorkpiece(saisonYearProcessMetadataUri);
+                Workpiece workpiece = metsService.loadWorkpiece(saisonYearProcessMetadataUri,
+                    ServiceManager.getRulesetService().openRuleset(process.getRuleset()));
 
                 /*
                  * Year identifier must be two consecutive integer years

@@ -31,7 +31,7 @@ public class MetsServiceIT {
     @Test
     public void testReadXML() throws Exception {
         Workpiece workpiece = ServiceManager.getMetsService()
-                .loadWorkpiece(new File("../Kitodo-DataFormat/src/test/resources/meta.xml").toURI());
+                .loadWorkpiece(new File("../Kitodo-DataFormat/src/test/resources/meta.xml").toURI(), null);
 
         // METS file has 183 associated images
         assertEquals(183, workpiece.getPhysicalStructure().getChildren().size());

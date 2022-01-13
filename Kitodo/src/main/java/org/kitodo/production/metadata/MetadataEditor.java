@@ -77,7 +77,8 @@ public class MetadataEditor {
      */
     public static void addLink(Process process, String insertionPosition, int childProcessId) throws IOException {
         URI metadataFileUri = ServiceManager.getProcessService().getMetadataFileUri(process);
-        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFileUri);
+        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFileUri,
+            ServiceManager.getRulesetService().openRuleset(process.getRuleset()));
         List<String> indices = Arrays.asList(insertionPosition.split(Pattern.quote(INSERTION_POSITION_SEPARATOR)));
         LogicalDivision logicalDivision = workpiece.getLogicalStructure();
         for (int index = 0; index < indices.size(); index++) {
@@ -135,7 +136,8 @@ public class MetadataEditor {
      */
     public static void removeLink(Process parentProcess, int childProcessId) throws IOException {
         URI metadataFileUri = ServiceManager.getProcessService().getMetadataFileUri(parentProcess);
-        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFileUri);
+        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFileUri,
+            ServiceManager.getRulesetService().openRuleset(parentProcess.getRuleset()));
         if (removeLinkRecursive(workpiece.getLogicalStructure(), childProcessId)) {
             ServiceManager.getFileService().createBackupFile(parentProcess);
             ServiceManager.getMetsService().saveWorkpiece(workpiece, metadataFileUri);

@@ -312,13 +312,15 @@ public class NewspaperProcessesMigrator {
         URI metadataFilePath = fileService.getMetadataFilePath(process);
         URI anchorFilePath = fileService.createAnchorFile(metadataFilePath);
         URI yearFilePath = fileService.createYearFile(metadataFilePath);
-        overallWorkpiece = metsService.loadWorkpiece(anchorFilePath);
+        overallWorkpiece = metsService.loadWorkpiece(anchorFilePath,
+            ServiceManager.getRulesetService().openRuleset(process.getRuleset()));
 
         dataEditorService.readData(anchorFilePath);
         dataEditorService.readData(yearFilePath);
         dataEditorService.readData(metadataFilePath);
 
-        Workpiece workpiece = metsService.loadWorkpiece(metadataFilePath);
+        Workpiece workpiece = metsService.loadWorkpiece(metadataFilePath,
+            ServiceManager.getRulesetService().openRuleset(process.getRuleset()));
         workpiece.setId(process.getId().toString());
         LogicalDivision newspaperLogicalDivision = workpiece.getLogicalStructure();
 
@@ -353,7 +355,8 @@ public class NewspaperProcessesMigrator {
 
     private void moveMetadataFromYearToIssue(Process process, String processTitle, URI yearFilePath,
             Workpiece workpiece) throws IOException {
-        Workpiece yearWorkpiece = metsService.loadWorkpiece(yearFilePath);
+        Workpiece yearWorkpiece = metsService.loadWorkpiece(yearFilePath,
+            ServiceManager.getRulesetService().openRuleset(process.getRuleset()));
         // Copy metadata from year to issue
         Collection<Metadata> processMetadataFromYear = new ArrayList<>(
                 yearWorkpiece.getLogicalStructure().getChildren().get(0).getMetadata());
@@ -421,7 +424,8 @@ public class NewspaperProcessesMigrator {
             LogicalDivision metaFileYearLogicalDivision)
             throws IOException, ConfigurationException {
 
-        LogicalDivision yearFileYearLogicalDivision = metsService.loadWorkpiece(yearMetadata)
+        LogicalDivision yearFileYearLogicalDivision = metsService
+                .loadWorkpiece(yearMetadata, ServiceManager.getRulesetService().openRuleset(process.getRuleset()))
                 .getLogicalStructure().getChildren().get(0);
         String year = MetadataEditor.getMetadataValue(yearFileYearLogicalDivision, FIELD_TITLE_SORT);
         if (Objects.isNull(year) || !year.matches(YEAR_OR_DOUBLE_YEAR)) {

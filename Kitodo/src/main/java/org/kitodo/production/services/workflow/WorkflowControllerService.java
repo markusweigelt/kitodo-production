@@ -172,7 +172,8 @@ public class WorkflowControllerService {
 
     private boolean validateMetadata(Task task) throws IOException, DAOException {
         URI metadataFileUri = ServiceManager.getProcessService().getMetadataFileUri(task.getProcess());
-        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFileUri);
+        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFileUri,
+            ServiceManager.getRulesetService().openRuleset(task.getProcess().getRuleset()));
         RulesetManagementInterface ruleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
         ruleset.load(new File(Paths.get(
                 ConfigCore.getParameter(ParameterCore.DIR_RULESETS),

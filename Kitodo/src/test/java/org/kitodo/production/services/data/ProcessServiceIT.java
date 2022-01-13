@@ -621,7 +621,8 @@ public class ProcessServiceIT {
     public void testCountMetadata() throws DAOException, IOException {
         Process process = ServiceManager.getProcessService().getById(2);
         URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(process);
-        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath);
+        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath,
+            ServiceManager.getRulesetService().openRuleset(process.getRuleset()));
         long logicalMetadata = MetsService.countLogicalMetadata(workpiece);
         Assert.assertEquals("Wrong amount of metadata found!", 4, logicalMetadata);
     }
