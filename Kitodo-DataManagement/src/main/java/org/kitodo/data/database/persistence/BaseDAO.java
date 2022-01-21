@@ -20,7 +20,9 @@ import java.util.Objects;
 
 import javax.persistence.PersistenceException;
 
+import org.hibernate.CacheMode;
 import org.hibernate.Hibernate;
+import org.hibernate.ScrollMode;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.SQLGrammarException;
@@ -347,8 +349,10 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     void storeObject(T object) throws DAOException {
         try (Session session = HibernateUtil.getSession()) {
             Transaction transaction = session.beginTransaction();
+            session.setCacheMode(CacheMode.IGNORE);
             session.saveOrUpdate(object);
             session.flush();
+            session.clear();
             transaction.commit();
         } catch (PersistenceException e) {
             throw new DAOException(e);

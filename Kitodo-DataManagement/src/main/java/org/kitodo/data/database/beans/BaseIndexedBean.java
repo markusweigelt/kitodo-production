@@ -16,6 +16,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.MappedSuperclass;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.kitodo.data.database.enums.IndexAction;
 
 /**
@@ -24,6 +26,7 @@ import org.kitodo.data.database.enums.IndexAction;
 @MappedSuperclass
 public abstract class BaseIndexedBean extends BaseBean {
 
+    @Cache(usage = CacheConcurrencyStrategy.NONE)
     @Column(name = "indexAction")
     @Enumerated(EnumType.STRING)
     private IndexAction indexAction;

@@ -205,18 +205,25 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      */
     @SuppressWarnings("unchecked")
     public void addAllObjectsToIndex(List<T> baseIndexedBeans) throws CustomResponseException, DAOException {
+        long start = System.currentTimeMillis();
         indexer.setMethod(HttpMethod.PUT);
         if (!baseIndexedBeans.isEmpty()) {
             indexer.performMultipleRequests(baseIndexedBeans, type, true);
+            long elapsedTime = System.currentTimeMillis() - start;
+            logger.debug("IndexWorker addAllObjectsToIndex performMultipleRequests "  + elapsedTime);
         }
+
         setIndexColumToIndexed(baseIndexedBeans);
     }
 
     private void setIndexColumToIndexed(List<T> baseIndexedBeans) throws DAOException {
+        long start = System.currentTimeMillis();
         for (T baseIndexedBean : baseIndexedBeans) {
             baseIndexedBean.setIndexAction(IndexAction.DONE);
             saveToDatabase(baseIndexedBean);
         }
+        long elapsedTime = System.currentTimeMillis() - start;
+        logger.debug("IndexWorker addAllObjectsToIndex save index done to database "  + elapsedTime);
     }
 
     /**

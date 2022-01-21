@@ -182,14 +182,20 @@ public abstract class KitodoRestClient implements RestClientInterface {
      *         success
      */
     public boolean createIndex(String query, String mappingType) throws IOException, CustomResponseException {
+        long start = System.currentTimeMillis();
+        logger.debug("KitodoRestClient.createIndex");
         if (query == null) {
             query = "{\"settings\" : {\"index\" : {\"number_of_shards\" : 1,\"number_of_replicas\" : 0}}}";
         }
         HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
         Request request = new Request(HttpMethod.PUT, "/" + indexBase + "_" + mappingType);
         request.setEntity(entity);
+        long elapsedTime = System.currentTimeMillis() - start;
+        logger.debug("KitodoRestClient.createIndex before client request" + elapsedTime);
         Response indexResponse = client.performRequest(request);
         int statusCode = processStatusCode(indexResponse.getStatusLine());
+        elapsedTime = System.currentTimeMillis() - start;
+        logger.debug("KitodoRestClient.createIndex after client request" + elapsedTime);
         return statusCode == 200 || statusCode == 201;
     }
 

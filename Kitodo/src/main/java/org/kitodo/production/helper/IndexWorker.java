@@ -93,11 +93,14 @@ public class IndexWorker implements Runnable {
 
     @SuppressWarnings("unchecked")
     private void indexChunks(int batchSize) throws CustomResponseException, DAOException, DataException {
+
+        logger.debug("IndexWorker indexChunks");
         List<Object> objectsToIndex;
         int indexLimit = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_INDEXLIMIT);
         while (this.indexedObjects < indexLimit) {
             int offset = this.indexedObjects + this.startIndexing;
 
+            long start = System.currentTimeMillis();
             if (indexAllObjects) {
                 objectsToIndex = searchService.getAll(offset, batchSize);
             } else {
@@ -106,8 +109,10 @@ public class IndexWorker implements Runnable {
             if (objectsToIndex.isEmpty()) {
                 break;
             }
-
+            long elapsedTime = System.currentTimeMillis() - start;
+            logger.debug("IndexWorker indexChunks DB needs " +  elapsedTime);
             indexObjects(objectsToIndex);
+            logger.debug("IndexWorker indexChunks indexObjects " +  elapsedTime);
         }
     }
 
