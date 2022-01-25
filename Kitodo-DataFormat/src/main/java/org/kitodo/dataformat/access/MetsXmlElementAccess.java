@@ -54,6 +54,7 @@ import org.kitodo.dataformat.metskitodo.MetsType.MetsHdr.MetsDocumentID;
 import org.kitodo.dataformat.metskitodo.MetsType.StructLink;
 import org.kitodo.dataformat.metskitodo.StructLinkType.SmLink;
 import org.kitodo.dataformat.metskitodo.StructMapType;
+import org.kitodo.dataformat.utils.WorkpieceCache;
 import org.kitodo.utils.JAXBContextCache;
 
 /**
@@ -193,12 +194,16 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      *            InputStream to read from
      */
     @Override
-    public Workpiece read(InputStream in) throws IOException {
+    public Workpiece read(InputStream in, URI uri) throws IOException {
         try {
-            JAXBContext jc = JAXBContextCache.getJAXBContext(Mets.class);
-            Unmarshaller unmarshaller = jc.createUnmarshaller();
-            Mets mets = (Mets) unmarshaller.unmarshal(in);
-            return new MetsXmlElementAccess(mets).workpiece;
+            Workpiece workpiece = WorkpieceCache.get(uri);
+            if( Objects.nonNull(workpiece) ) {
+                return workpiece;
+            }
+            Mets mets = JAXBContextCache.getUnmarshalled(Mets.class,in,uri.getPath());
+            workpiece = new MetsXmlElementAccess(mets).workpiece;
+            WorkpieceCache.put(workpiece, uri);
+            return workpiece;
         } catch (JAXBException e) {
             if (e.getCause() instanceof IOException) {
                 throw (IOException) e.getCause();
@@ -218,12 +223,14 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      *             if the output device has an error
      */
     @Override
-    public void save(Workpiece workpiece, OutputStream out) throws IOException {
+    public void save(Workpiece workpiece, OutputStream out, URI uri) throws IOException {
         try {
             JAXBContext context = JAXBContextCache.getJAXBContext(Mets.class);
             Marshaller marshal = context.createMarshaller();
             marshal.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             marshal.marshal(new MetsXmlElementAccess(workpiece).toMets(), out);
+            WorkpieceCache.put(workpiece,uri);
+            JAXBContextCache.invalidateEntry(Mets.class,uri.getPath());
         } catch (JAXBException e) {
             if (e.getCause() instanceof IOException) {
                 throw (IOException) e.getCause();
@@ -408,4 +415,6 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         }).collect(Collectors.toList()));
         return structLink;
     }
+
+
 }

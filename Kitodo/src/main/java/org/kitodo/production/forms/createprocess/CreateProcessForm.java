@@ -526,10 +526,11 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     }
 
     private void saveTempProcessMetadata(TempProcess tempProcess) {
+        URI metadataFileUri = ServiceManager.getProcessService().getMetadataFileUri(tempProcess.getProcess());
         try (OutputStream out = ServiceManager.getFileService()
-                .write(ServiceManager.getProcessService().getMetadataFileUri(tempProcess.getProcess()))) {
+                .write( metadataFileUri)) {
             tempProcess.getWorkpiece().setId(tempProcess.getProcess().getId().toString());
-            ServiceManager.getMetsService().save(tempProcess.getWorkpiece(), out);
+            ServiceManager.getMetsService().save(tempProcess.getWorkpiece(), out, metadataFileUri);
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }

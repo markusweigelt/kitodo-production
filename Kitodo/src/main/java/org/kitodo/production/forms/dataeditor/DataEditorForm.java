@@ -302,7 +302,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     private void openMetsFile() throws IOException, InvalidImagesException {
         mainFileUri = ServiceManager.getProcessService().getMetadataFileUri(process);
         workpiece = ServiceManager.getMetsService().loadWorkpiece(mainFileUri);
-        workpieceOriginalState = ServiceManager.getMetsService().loadWorkpiece(mainFileUri);
+        workpieceOriginalState = workpiece;
         if (Objects.isNull(workpiece.getId())) {
             logger.warn("Workpiece has no ID. Cannot verify workpiece ID. Setting workpiece ID.");
             workpiece.setId(process.getId().toString());
@@ -446,7 +446,7 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
             structurePanel.preserve();
             ServiceManager.getFileService().createBackupFile(process);
             try (OutputStream out = ServiceManager.getFileService().write(mainFileUri)) {
-                ServiceManager.getMetsService().save(workpiece, out);
+                ServiceManager.getMetsService().save(workpiece, out, mainFileUri);
                 ServiceManager.getProcessService().saveToIndex(process,false);
                 unsavedUploadedMedia.clear();
                 deleteUnsavedDeletedMedia();

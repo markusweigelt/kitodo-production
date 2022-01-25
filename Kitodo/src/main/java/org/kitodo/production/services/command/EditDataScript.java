@@ -13,6 +13,7 @@ package org.kitodo.production.services.command;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -104,9 +105,10 @@ public abstract class EditDataScript {
      * @param process the process to save
      */
     public void saveChanges(Workpiece workpiece, Process process) {
+        URI metadataFileUri = ServiceManager.getProcessService().getMetadataFileUri(process);
         try (OutputStream out = ServiceManager.getFileService()
-                .write(ServiceManager.getFileService().getMetadataFilePath(process))) {
-            ServiceManager.getMetsService().save(workpiece, out);
+                .write(metadataFileUri)) {
+            ServiceManager.getMetsService().save(workpiece, out, metadataFileUri);
             ServiceManager.getProcessService().saveToIndex(process, false);
         } catch (IOException | CustomResponseException | DataException e) {
             logger.error(e.getMessage());

@@ -33,8 +33,8 @@ import org.kitodo.api.MdSec;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
 import org.kitodo.api.dataformat.LogicalDivision;
-import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.MediaVariant;
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.ProcessingNote;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
@@ -53,7 +53,7 @@ public class MetsXmlElementAccessIT {
     @Test
     public void testRead() throws Exception {
         Workpiece workpiece = new MetsXmlElementAccess()
-                .read(new FileInputStream(new File("src/test/resources/meta.xml")));
+                .read(new FileInputStream("src/test/resources/meta.xml"), URI.create("src/test/resources/meta.xml"));
 
         // METS file has 183 associated images
         assertEquals(183, workpiece.getPhysicalStructure().getChildren().size());
@@ -220,12 +220,13 @@ public class MetsXmlElementAccessIT {
         workpiece.getEditHistory().add(note);
 
         // write file
-        try (OutputStream out = new FileOutputStream(new File("src/test/resources/out.xml"))) {
-            new MetsXmlElementAccess().save(workpiece, out);
+        try (OutputStream out = new FileOutputStream("src/test/resources/out.xml")) {
+            new MetsXmlElementAccess().save(workpiece, out, URI.create("src/test/resources/out.xml"));
         }
 
         // read the file and see if everything is in it
-        Workpiece reread = new MetsXmlElementAccess().read(new FileInputStream(new File("src/test/resources/out.xml")));
+        Workpiece reread = new MetsXmlElementAccess().read(new FileInputStream("src/test/resources/out.xml"),
+            URI.create("src/test/resources/out.xml"));
 
         assertEquals(1, reread.getEditHistory().size());
         List<PhysicalDivision> physicalDivisions = reread.getPhysicalStructure().getChildren();
@@ -252,7 +253,8 @@ public class MetsXmlElementAccessIT {
     @Test
     public void missingMetsHeaderCreationDateDidNotThrowNullPointerException() throws IOException {
         Workpiece workpiece = new MetsXmlElementAccess()
-                .read(new FileInputStream(new File("src/test/resources/meta_missing_createdate.xml")));
+                .read(new FileInputStream("src/test/resources/meta_missing_createdate.xml"),
+                    URI.create("src/test/resources/meta_missing_createdate.xml"));
         assertNotNull(workpiece.getCreationDate());
     }
 }

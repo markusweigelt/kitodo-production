@@ -1204,10 +1204,11 @@ public class ImportService {
             ServiceManager.getProcessService().save(tempProcess.getProcess(), true);
             URI processBaseUri = ServiceManager.getFileService().createProcessLocation(tempProcess.getProcess());
             tempProcess.getProcess().setProcessBaseUri(processBaseUri);
+            URI metadataFileUri = ServiceManager.getProcessService().getMetadataFileUri(tempProcess.getProcess());
             OutputStream out = ServiceManager.getFileService()
-                    .write(ServiceManager.getProcessService().getMetadataFileUri(tempProcess.getProcess()));
+                    .write(metadataFileUri);
             tempProcess.getWorkpiece().setId(tempProcess.getProcess().getId().toString());
-            ServiceManager.getMetsService().save(tempProcess.getWorkpiece(), out);
+            ServiceManager.getMetsService().save(tempProcess.getWorkpiece(), out, metadataFileUri);
         } catch (DAOException | IOException | ProcessGenerationException | XPathExpressionException
                 | ParserConfigurationException | NoRecordFoundException | UnsupportedFormatException
                 | URISyntaxException | SAXException | InvalidMetadataValueException | NoSuchMetadataFieldException

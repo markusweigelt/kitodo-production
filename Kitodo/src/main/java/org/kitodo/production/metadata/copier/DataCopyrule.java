@@ -13,6 +13,7 @@ package org.kitodo.production.metadata.copier;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -53,9 +54,10 @@ public class DataCopyrule {
             metadataEntry.setDomain(domain);
             child.getMetadata().add(metadataEntry);
 
+            URI metadataFileUri = ServiceManager.getProcessService().getMetadataFileUri(data.getProcess());
             try (OutputStream out = ServiceManager.getFileService()
-                    .write(ServiceManager.getFileService().getMetadataFilePath(data.getProcess()))) {
-                ServiceManager.getMetsService().save(workpiece, out);
+                    .write(metadataFileUri)) {
+                ServiceManager.getMetsService().save(workpiece, out, metadataFileUri);
                 ServiceManager.getProcessService().saveToIndex(data.getProcess(), false);
             } catch (IOException | CustomResponseException | DataException e) {
                 logger.error("Exception while saving Metadata file", e, e.getMessage());

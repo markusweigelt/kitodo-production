@@ -14,6 +14,7 @@ package org.kitodo.api.dataformat.mets;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 
 import org.kitodo.api.dataformat.Workpiece;
 
@@ -50,7 +51,7 @@ public interface MetsXmlElementAccessInterface {
      * @throws IOException
      *             if the reading fails
      */
-    Workpiece read(InputStream in) throws IOException;
+    Workpiece read(InputStream in, URI uri) throws IOException;
 
     /**
      * Writes the workpiece to a METS file.
@@ -62,5 +63,5 @@ public interface MetsXmlElementAccessInterface {
      * @throws IOException
      *             if the writing fails
      */
-    void save(Workpiece workpiece, OutputStream out) throws IOException;
+    void save(Workpiece workpiece, OutputStream out, URI uri) throws IOException;
 }

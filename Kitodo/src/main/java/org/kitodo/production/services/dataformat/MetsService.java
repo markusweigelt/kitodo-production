@@ -99,7 +99,7 @@ public class MetsService {
     public Workpiece loadWorkpiece(URI uri) throws IOException {
         try (InputStream inputStream = ServiceManager.getFileService().read(uri)) {
             logger.info("Reading {}", uri.toString());
-            return metsXmlElementAccess.read(inputStream);
+            return metsXmlElementAccess.read(inputStream, uri);
         }
     }
 
@@ -119,7 +119,7 @@ public class MetsService {
         Result outputTarget = new StreamResult(outputStream);
         TransformerFactory.newInstance().newTransformer().transform(xmlSource, outputTarget);
         InputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-        return metsXmlElementAccess.read(inputStream);
+        return metsXmlElementAccess.read(inputStream, URI.create(document.getDocumentURI()));
     }
 
     /**
@@ -137,12 +137,12 @@ public class MetsService {
     public void saveWorkpiece(Workpiece workpiece, URI uri) throws IOException {
         try (OutputStream outputStream = ServiceManager.getFileService().write(uri)) {
             logger.info("Saving {}", uri.toString());
-            save(workpiece, outputStream);
+            save(workpiece, outputStream, uri);
         }
     }
 
-    public void save(Workpiece workpiece, OutputStream outputStream) throws IOException {
-        metsXmlElementAccess.save(workpiece, outputStream);
+    public void save(Workpiece workpiece, OutputStream outputStream, URI uri) throws IOException {
+        metsXmlElementAccess.save(workpiece, outputStream, uri);
     }
 
     /**

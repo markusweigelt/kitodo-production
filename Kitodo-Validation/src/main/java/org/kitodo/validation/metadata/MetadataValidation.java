@@ -99,7 +99,7 @@ public class MetadataValidation implements MetadataValidationInterface {
             FileManagementInterface fileManagement = getFileManagement();
             Workpiece workpiece;
             try (InputStream inputStream = fileManagement.read(metsFileUri)) {
-                workpiece = createMetsXmlElementAccess().read(inputStream);
+                workpiece = createMetsXmlElementAccess().read(inputStream, metsFileUri);
             }
             RulesetManagementInterface ruleset = getRulesetManagement();
             ruleset.load(new File(rulesetFileUri.getPath()));
