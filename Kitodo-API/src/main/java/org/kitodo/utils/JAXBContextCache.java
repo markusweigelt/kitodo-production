@@ -129,6 +129,7 @@ public class JAXBContextCache {
         final Unmarshaller unmarshaller = getInstance().getJAXBContext(clazz).createUnmarshaller();
         T unmarshalledFile = (T) unmarshaller.unmarshal(inputStream);
         contextDescriptorObjectCache.put(contextDescriptor, unmarshalledFile);
+        contextDescriptorHistory.put(contextDescriptor, System.currentTimeMillis());
         return unmarshalledFile;
     }
 
