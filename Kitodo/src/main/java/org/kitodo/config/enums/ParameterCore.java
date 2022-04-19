@@ -46,6 +46,8 @@ public enum ParameterCore implements ParameterInterface {
      */
     DIR_RULESETS(new Parameter<UndefinedParameter>("directory.rulesets")),
 
+    DIR_OCRD_WORKFLOWS(new Parameter<UndefinedParameter>("directory.ocrd.workflows")),
+
     /**
      * Absolute path to the directory that the ocr workflow files will be
      * read from. It must be terminated by a directory separator ("/").
