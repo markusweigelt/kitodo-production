@@ -73,12 +73,6 @@
                 <p:menuitem value="#{msgs.newRuleSet}" action="#{RulesetForm.createNewRuleset}" immediate="true"
                             rendered="#{SecurityAccessController.hasAuthorityToAddRuleset()}"
                             id="newRulesetButton" icon="fa fa-plus"/>
-                <p:menuitem value="#{msgs['importConfig.new']}" action="#{ImportConfigurationListView.newImportConfiguration()}" immediate="true"
-                            rendered="#{SecurityAccessController.hasAuthorityToAddImportConfiguration()}"
-                            id="newOpacConfigurationButton" icon="fa fa-plus"/>
-                <p:menuitem value="#{msgs['mappingFile.new']}" action="#{MappingFileListView.newMappingFile()}" immediate="true"
-                            rendered="#{SecurityAccessController.hasAuthorityToAddMappingFile()}"
-                            id="newMappingFileButton" icon="fa fa-plus"/>
             </p:menuButton>
         </h:form>
     </ui:define>
@@ -86,10 +80,8 @@
     <ui:define name="pageTabView">
         <p:tabView activeIndex="#{ProjectForm.activeTabIndex}" prependId="false"
                    id="projectsTabView" widgetVar="projectsTabView" dynamic="true">
-            <p:ajax event="tabChange"
-                    listener="#{ProjectForm.onTabChange}"
-                    update="convertButtonWrapper"/>
-            <p:tab title="#{msgs.projects}" id="projectTab"
+            <p:ajax event="tabChange" listener="#{ProjectForm.onTabChange}"/>
+            <p:tab title="#{msgs.projectList}" id="projectTab"
                    rendered="#{SecurityAccessController.hasAuthorityToViewProjectList()}">
                 <ui:include src="/WEB-INF/templates/includes/projects/projectList.xhtml"/>
             </p:tab>
@@ -116,6 +108,10 @@
             <p:tab title="#{msgs['mappingFile.files']}" id="mappingFilesTab"
                    rendered="#{SecurityAccessController.hasAuthorityToViewMappingFileList()}">
                 <ui:include src="/WEB-INF/templates/includes/projects/mappingFiles.xhtml"/>
+            </p:tab>
+            <p:tab title="OCR Workflows" id="ocrWorkflowTab"
+                   rendered="#{SecurityAccessController.hasAuthorityToViewOCRWorkflow()}">
+                <ui:include src="/WEB-INF/templates/includes/projects/ocrWorkflowList.xhtml"/>
             </p:tab>
         </p:tabView>
         <p:ajaxStatus onstart="$('#loadingScreen').show()" oncomplete="$('#loadingScreen').hide()"/>
