@@ -32,16 +32,6 @@
 
     <ui:define name="contentHeader">
         <h3>#{msgs.projects}</h3>
-        <h:panelGroup id="convertButtonWrapper">
-            <h:form id="convertMenu"
-                    rendered="#{ProjectForm.activeTabIndex eq 5}">
-                <p:commandButton value="#{msgs['importConfig.migration.importCatalogConfigurations']}"
-                                 id="convertCatalogConfigurations"
-                                 styleClass="secondary"
-                                 action="#{ImportConfigurationListView.startCatalogConfigurationImport()}"
-                                 immediate="true"/>
-            </h:form>
-        </h:panelGroup>
         <h:form id="configureColumnsForm" rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}">
             <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
                                   scrollHeight="300"
@@ -73,6 +63,9 @@
                 <p:menuitem value="#{msgs.newRuleSet}" action="#{RulesetForm.createNewRuleset}" immediate="true"
                             rendered="#{SecurityAccessController.hasAuthorityToAddRuleset()}"
                             id="newRulesetButton" icon="fa fa-plus"/>
+                <p:menuitem value="#{msgs.newOCRWorkflow}" action="#{OCRWorkflowForm.createNewOCRWorkflow()}" immediate="true"
+                            rendered="#{SecurityAccessController.hasAuthorityToAddOCRWorkflow()}"
+                            id="newOCRWorkflowButton" icon="fa fa-plus"/>
             </p:menuButton>
         </h:form>
     </ui:define>
@@ -101,14 +94,6 @@
                    rendered="#{SecurityAccessController.hasAuthorityToViewRulesetList()}">
                 <ui:include src="/WEB-INF/templates/includes/projects/rulesetList.xhtml"/>
             </p:tab>
-            <p:tab title="#{msgs['importConfig.configurations']}" id="importConfigurationsTab"
-                   rendered="#{SecurityAccessController.hasAuthorityToViewImportConfigurationList()}">
-                <ui:include src="/WEB-INF/templates/includes/projects/importConfigurations.xhtml"/>
-            </p:tab>
-            <p:tab title="#{msgs['mappingFile.files']}" id="mappingFilesTab"
-                   rendered="#{SecurityAccessController.hasAuthorityToViewMappingFileList()}">
-                <ui:include src="/WEB-INF/templates/includes/projects/mappingFiles.xhtml"/>
-            </p:tab>
             <p:tab title="OCR Workflows" id="ocrWorkflowTab"
                    rendered="#{SecurityAccessController.hasAuthorityToViewOCRWorkflow()}">
                 <ui:include src="/WEB-INF/templates/includes/projects/ocrWorkflowList.xhtml"/>
@@ -120,12 +105,6 @@
     <ui:define name="breadcrumbs">
         <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
         <p:menuitem value="#{msgs.projects}" icon="fa fa-archive"/>
-    </ui:define>
-
-    <ui:define name="dialog">
-        <ui:include src="/WEB-INF/templates/includes/projects/importCatalogConfigurationsPopup.xhtml"/>
-        <ui:include src="/WEB-INF/templates/includes/projects/importCatalogConfigurationsResult.xhtml"/>
-        <ui:include src="/WEB-INF/templates/includes/projects/selectMappingFileFormats.xhtml"/>
     </ui:define>
 
 </ui:composition>
