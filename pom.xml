@@ -161,6 +161,17 @@
                 <artifactId>maven-help-plugin</artifactId>
                 <version>3.2.0</version>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>kitodo-jar</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -260,7 +271,7 @@
                                     <outputDirectory>${directory.modules}</outputDirectory>
                                     <resources>
                                         <resource>
-                                            <directory>Kitodo/modules/</directory>
+                                            <directory>${main.basedir}/Kitodo/modules/</directory>
                                             <include>*.jar</include>
                                             <filtering>false</filtering>
                                         </resource>
