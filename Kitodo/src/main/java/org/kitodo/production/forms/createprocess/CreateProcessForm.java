@@ -548,15 +548,18 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     }
 
     private void copyOCRWorkflowFileToProcessDataDirectory() throws IOException {
-        OCRWorkflow ocrWorkflow = getMainProcess().getTemplate().getOcrWorkflow();
-        if (Objects.nonNull(ocrWorkflow) && Objects.nonNull(ocrWorkflow.getFile())) {
-            URI source = Paths.get(
-                    ConfigCore.getParameter(ParameterCore.DIR_OCR_WORKFLOWS) + getMainProcess().getTemplate()
-                            .getOcrWorkflow().getFile()).toUri();
-            URI target = Paths.get(ConfigCore.getKitodoDataDirectory(),
-                    ServiceManager.getProcessService().getProcessDataDirectory(getMainProcess()).getPath(),
-                    "ocr_workflow.sh").toUri();
-            ServiceManager.getFileService().copyFile(source, target);
+        Template template = getMainProcess().getTemplate();
+        if (Objects.nonNull(template)) {
+            OCRWorkflow ocrWorkflow = template.getOcrWorkflow();
+            if (Objects.nonNull(ocrWorkflow) && Objects.nonNull(ocrWorkflow.getFile())) {
+                URI source = Paths.get(
+                        ConfigCore.getParameter(ParameterCore.DIR_OCR_WORKFLOWS) + getMainProcess().getTemplate()
+                                .getOcrWorkflow().getFile()).toUri();
+                URI target = Paths.get(ConfigCore.getKitodoDataDirectory(),
+                        ServiceManager.getProcessService().getProcessDataDirectory(getMainProcess()).getPath(),
+                        "ocr_workflow.sh").toUri();
+                ServiceManager.getFileService().copyFile(source, target);
+            }
         }
     }
 
