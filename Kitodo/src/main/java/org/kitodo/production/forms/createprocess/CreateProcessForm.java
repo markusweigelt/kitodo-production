@@ -496,13 +496,13 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     /**
      * Create process hierarchy.
      */
-    private void createProcessHierarchy()
-            throws DataException, ProcessGenerationException, IOException {
+    private void createProcessHierarchy() throws DataException, ProcessGenerationException, IOException {
         // discard all processes in hierarchy except the first if parent process in
         // title record link tab is selected!
-        if (this.processes.size() > 1 && Objects.nonNull(this.titleRecordLinkTab.getTitleRecordProcess())
-                && Objects.nonNull(this.titleRecordLinkTab.getSelectedInsertionPosition())
-                && !this.titleRecordLinkTab.getSelectedInsertionPosition().isEmpty()) {
+        if (this.processes.size() > 1 && Objects.nonNull(
+                this.titleRecordLinkTab.getTitleRecordProcess()) && Objects.nonNull(
+                this.titleRecordLinkTab.getSelectedInsertionPosition()) && !this.titleRecordLinkTab.getSelectedInsertionPosition()
+                .isEmpty()) {
             this.processes = new LinkedList<>(Collections.singletonList(this.processes.get(0)));
         }
         ProcessService.checkTasks(this.getMainProcess(), processDataTab.getDocType());
@@ -526,16 +526,15 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
 
         // add links between child processes and main process
         this.saveChildProcessLinks();
-
         // if a process is selected in 'TitleRecordLinkTab' link it as parent with the first process in the list
         if (this.processes.size() > 0 && Objects.nonNull(titleRecordLinkTab.getTitleRecordProcess())) {
             MetadataEditor.addLink(titleRecordLinkTab.getTitleRecordProcess(),
-                titleRecordLinkTab.getSelectedInsertionPosition(), this.processes.get(0).getProcess().getId());
+                    titleRecordLinkTab.getSelectedInsertionPosition(), this.processes.get(0).getProcess().getId());
             ProcessService.setParentRelations(titleRecordLinkTab.getTitleRecordProcess(),
-                processes.get(0).getProcess());
+                    processes.get(0).getProcess());
             String summary = Helper.getTranslation("newProcess.catalogueSearch.linkedToExistingProcessSummary");
             String detail = Helper.getTranslation("newProcess.catalogueSearch.linkedToExistingProcessDetail",
-                titleRecordLinkTab.getTitleRecordProcess().getTitle());
+                    titleRecordLinkTab.getTitleRecordProcess().getTitle());
             catalogImportDialog.showGrowlMessage(summary, detail);
         } else {
             // add links between consecutive processes in list
@@ -544,15 +543,21 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                 MetadataEditor.addLink(this.processes.get(i + 1).getProcess(), "0", tempProcess.getProcess().getId());
             }
         }
-
-        OCRWorkflow ocrWorkflow = getMainProcess().getTemplate().getOcrWorkflow();
-        if( Objects.nonNull(ocrWorkflow) && Objects.nonNull(ocrWorkflow.getFile()) ) {
-            URI source = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_OCR_WORKFLOWS) + getMainProcess().getTemplate().getOcrWorkflow().getFile()).toUri();
-            URI target = Paths.get(ConfigCore.getKitodoDataDirectory(),ServiceManager.getProcessService().getProcessDataDirectory(getMainProcess()).getPath(),"ocr_workflow.sh").toUri();
-            ServiceManager.getFileService().copyFile(source,target);
-        }
-
+        copyOCRWorkflowFileToProcessDataDirectory();
         ServiceManager.getProcessService().save(getMainProcess(), true);
+    }
+
+    private void copyOCRWorkflowFileToProcessDataDirectory() throws IOException {
+        OCRWorkflow ocrWorkflow = getMainProcess().getTemplate().getOcrWorkflow();
+        if (Objects.nonNull(ocrWorkflow) && Objects.nonNull(ocrWorkflow.getFile())) {
+            URI source = Paths.get(
+                    ConfigCore.getParameter(ParameterCore.DIR_OCR_WORKFLOWS) + getMainProcess().getTemplate()
+                            .getOcrWorkflow().getFile()).toUri();
+            URI target = Paths.get(ConfigCore.getKitodoDataDirectory(),
+                    ServiceManager.getProcessService().getProcessDataDirectory(getMainProcess()).getPath(),
+                    "ocr_workflow.sh").toUri();
+            ServiceManager.getFileService().copyFile(source, target);
+        }
     }
 
     /**
