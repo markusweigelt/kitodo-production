@@ -63,7 +63,16 @@
                 <p:menuitem value="#{msgs.newRuleSet}" action="#{RulesetForm.createNewRuleset}" immediate="true"
                             rendered="#{SecurityAccessController.hasAuthorityToAddRuleset()}"
                             id="newRulesetButton" icon="fa fa-plus"/>
-                <p:menuitem value="#{msgs.newOCRWorkflow}" action="#{OCRWorkflowForm.createNewOCRWorkflow()}" immediate="true"
+                <p:menuitem value="#{msgs['importConfig.new']}"
+                            action="#{ImportConfigurationListView.newImportConfiguration()}" immediate="true"
+                            rendered="#{SecurityAccessController.hasAuthorityToAddImportConfiguration()}"
+                            id="newOpacConfigurationButton" icon="fa fa-plus"/>
+                <p:menuitem value="#{msgs['mappingFile.new']}" action="#{MappingFileListView.newMappingFile()}"
+                            immediate="true"
+                            rendered="#{SecurityAccessController.hasAuthorityToAddMappingFile()}"
+                            id="newMappingFileButton" icon="fa fa-plus"/>
+                <p:menuitem value="#{msgs.newOCRWorkflow}" action="#{OCRWorkflowForm.createNewOCRWorkflow()}"
+                            immediate="true"
                             rendered="#{SecurityAccessController.hasAuthorityToAddOCRWorkflow()}"
                             id="newOCRWorkflowButton" icon="fa fa-plus"/>
             </p:menuButton>
@@ -93,6 +102,14 @@
             <p:tab title="#{msgs.rulesets}" id="rulesetTab"
                    rendered="#{SecurityAccessController.hasAuthorityToViewRulesetList()}">
                 <ui:include src="/WEB-INF/templates/includes/projects/rulesetList.xhtml"/>
+            </p:tab>
+            <p:tab title="#{msgs['importConfig.configurations']}" id="importConfigurationsTab"
+                   rendered="#{SecurityAccessController.hasAuthorityToViewImportConfigurationList()}">
+                <ui:include src="/WEB-INF/templates/includes/projects/importConfigurations.xhtml"/>
+            </p:tab>
+            <p:tab title="#{msgs['mappingFile.files']}" id="mappingFilesTab"
+                   rendered="#{SecurityAccessController.hasAuthorityToViewMappingFileList()}">
+                <ui:include src="/WEB-INF/templates/includes/projects/mappingFiles.xhtml"/>
             </p:tab>
             <p:tab title="OCR Workflows" id="ocrWorkflowTab"
                    rendered="#{SecurityAccessController.hasAuthorityToViewOCRWorkflow()}">
