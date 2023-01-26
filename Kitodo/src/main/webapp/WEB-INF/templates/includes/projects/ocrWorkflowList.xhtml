@@ -71,7 +71,7 @@
                                styleClass="action"
                                title="#{msgs.delete}"
                                rendered="#{SecurityAccessController.hasAuthorityToDeleteOCRWorkflow()}"
-                               update="configurationTable">
+                               update="ocrWorkflowsTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <p:confirm header="#{msgs.confirmDelete}"
                                message="#{OCRWorkflowEditView.formatString('confirmDeleteOCRWorkflow', item.title)}"
