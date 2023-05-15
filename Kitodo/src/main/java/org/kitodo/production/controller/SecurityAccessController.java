@@ -21,6 +21,7 @@ import org.kitodo.production.services.security.SecurityAccessService;
 /**
  * Controller for checking authorities of current user.
  */
+@SuppressWarnings("checkstyle:RightCurly")
 @Named("SecurityAccessController")
 @RequestScoped
 public class SecurityAccessController {
@@ -1114,5 +1115,7 @@ public class SecurityAccessController {
      *
      * @return true if the current user has the authority to view ocr workflow.
      */
-    public boolean hasAuthorityToViewOCRWorkflow() { return securityAccessService.hasAuthorityToViewOCRWorkflow(); }
+    public boolean hasAuthorityToViewOCRWorkflow() {
+        return securityAccessService.hasAuthorityToViewOCRWorkflow();
+    }
 }
