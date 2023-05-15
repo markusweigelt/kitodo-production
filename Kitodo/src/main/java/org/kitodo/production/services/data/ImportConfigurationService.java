@@ -102,8 +102,8 @@ public class ImportConfigurationService extends SearchDatabaseService<ImportConf
      * configuration for a project, an exception is thrown.
      * @param id of import configuration to delete
      * @throws DAOException if import configuration could not be deleted from database
-     * @throws ImportConfigurationInUseException if import configuration is assigned as default configuration to at
-     *         least one project
+     * @throws ImportConfigurationInUseException if import configuration is assigned as default configuration or
+     *         default child configuration to at least one project
      */
     @Override
     public void removeFromDatabase(Integer id) throws DAOException, ImportConfigurationInUseException {
@@ -111,6 +111,10 @@ public class ImportConfigurationService extends SearchDatabaseService<ImportConf
             ImportConfiguration defaultConfiguration = project.getDefaultImportConfiguration();
             if (Objects.nonNull(defaultConfiguration) && Objects.equals(defaultConfiguration.getId(), id)) {
                 throw new ImportConfigurationInUseException(defaultConfiguration.getTitle(), project.getTitle());
+            }
+            ImportConfiguration defaultChildConfiguration = project.getDefaultChildProcessImportConfiguration();
+            if (Objects.nonNull(defaultChildConfiguration) && Objects.equals(defaultChildConfiguration.getId(), id)) {
+                throw new ImportConfigurationInUseException(defaultChildConfiguration.getTitle(), project.getTitle());
             }
         }
         dao.remove(id);
@@ -135,8 +139,18 @@ public class ImportConfigurationService extends SearchDatabaseService<ImportConf
         return getAllImportConfigurations(ImportConfigurationType.FILE_UPLOAD);
     }
 
+    /**
+     * Load and return all ImportConfigurations sorted by title.
+     * @return list of all ImportConfigurations sorted by title
+     * @throws DAOException when ImportConfigurations could not be loaded
+     */
+    public List<ImportConfiguration> getAll() throws DAOException {
+        return super.getAll().stream().sorted(Comparator.comparing(ImportConfiguration::getTitle))
+                .collect(Collectors.toList());
+    }
+
     private List<ImportConfiguration> getAllImportConfigurations(ImportConfigurationType type) throws DAOException {
-        return getAll().stream()
+        return super.getAll().stream()
                 .filter(importConfiguration -> type.name()
                         .equals(importConfiguration.getConfigurationType()))
                 .sorted(Comparator.comparing(ImportConfiguration::getTitle))

@@ -179,13 +179,19 @@ public class WorkflowControllerService {
                 ConfigCore.getParameter(ParameterCore.DIR_RULESETS),
                 task.getProcess().getRuleset().getFile()).toString()));
         ValidationResult validationResult = ServiceManager.getMetadataValidationService().validate(workpiece, ruleset);
-        if (State.ERROR.equals(validationResult.getState())) {
+        boolean strictValidation = ConfigCore.getBooleanParameter(ParameterCore.VALIDATION_FAIL_ON_WARNING);
+        State state = validationResult.getState();
+        if (State.ERROR.equals(state) || (strictValidation && !State.SUCCESS.equals(state))) {
             Helper.setErrorMessage(Helper.getTranslation("dataEditor.validation.state.error"));
             for (String message : validationResult.getResultMessages()) {
                 Helper.setErrorMessage(message);
             }
         }
-        return !validationResult.getState().equals(State.ERROR);
+        if (strictValidation) {
+            return State.SUCCESS.equals(state);
+        } else {
+            return !State.ERROR.equals(state);
+        }
     }
 
     /**
@@ -257,8 +263,8 @@ public class WorkflowControllerService {
         if (!process.getChildren().isEmpty()) {
             boolean allChildrenClosed = true;
             for (Process child : process.getChildren()) {
-                allChildrenClosed &= child.getSortHelperStatus().equals("100000000")
-                        || child.getSortHelperStatus().equals("100000000000");
+                allChildrenClosed &= "100000000".equals(child.getSortHelperStatus())
+                        || "100000000000".equals(child.getSortHelperStatus());
             }
             return allChildrenClosed;
         }
@@ -343,26 +349,27 @@ public class WorkflowControllerService {
      *
      * @param comment as Comment object
      */
-    public void reportProblem(Comment comment) throws DataException {
+    public void reportProblem(Comment comment, TaskEditType taskEditType) throws DataException {
         Task currentTask = comment.getCurrentTask();
         if (currentTask.isTypeImagesRead() || currentTask.isTypeImagesWrite()) {
             this.webDav.uploadFromHome(getCurrentUser(), comment.getProcess());
         }
         Date date = new Date();
         currentTask.setProcessingStatus(TaskStatus.LOCKED);
-        currentTask.setEditType(TaskEditType.MANUAL_SINGLE);
+        currentTask.setEditType(taskEditType);
         currentTask.setProcessingTime(date);
         taskService.replaceProcessingUser(currentTask, getCurrentUser());
         currentTask.setProcessingBegin(null);
         taskService.save(currentTask);
 
-        Task correctionTask = comment.getCorrectionTask();
-        correctionTask.setProcessingStatus(TaskStatus.OPEN);
-        correctionTask.setProcessingEnd(null);
-        correctionTask.setCorrection(true);
-        taskService.save(correctionTask);
-
-        lockTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask);
+        if (comment.hasSeparateCorrectionTask()) {
+            Task correctionTask = comment.getCorrectionTask();
+            correctionTask.setProcessingStatus(TaskStatus.OPEN);
+            correctionTask.setProcessingEnd(null);
+            correctionTask.setCorrection(true);
+            taskService.save(correctionTask);
+            lockTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask);
+        }
         updateProcessSortHelperStatus(currentTask.getProcess());
     }
 
@@ -370,12 +377,23 @@ public class WorkflowControllerService {
      * Unified method for solve problem.
      *
      * @param comment
-     *              as Comment object
+     *         as Comment object
      */
-    public void solveProblem(Comment comment) throws DataException, DAOException, IOException {
-        closeTaskByUser(comment.getCorrectionTask());
+    public void solveProblem(Comment comment, TaskEditType taskEditType)
+            throws DataException, DAOException, IOException {
+        if (comment.hasSeparateCorrectionTask()) {
+            closeTaskByUser(comment.getCorrectionTask());
+            comment.setCorrectionTask(ServiceManager.getTaskService().getById(comment.getCorrectionTask().getId()));
+        } else {
+            Task currentTask = comment.getCurrentTask();
+            currentTask.setProcessingStatus(TaskStatus.OPEN);
+            currentTask.setEditType(taskEditType);
+            currentTask.setProcessingTime(new Date());
+            currentTask.setProcessingBegin(null);
+            taskService.replaceProcessingUser(currentTask, getCurrentUser());
+            taskService.save(currentTask);
+        }
         comment.setCurrentTask(ServiceManager.getTaskService().getById(comment.getCurrentTask().getId()));
-        comment.setCorrectionTask(ServiceManager.getTaskService().getById(comment.getCorrectionTask().getId()));
         comment.setCorrected(Boolean.TRUE);
         comment.setCorrectionDate(new Date());
         try {

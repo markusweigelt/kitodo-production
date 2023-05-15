@@ -381,6 +381,11 @@ public enum ParameterCore implements ParameterInterface {
     VALIDATE_IDENTIFIER_REGEX(new Parameter<>("validateIdentifierRegex", "[\\w|-]")),
 
     /**
+     * Flag to control whether metadata validation should fail on warnings or just on errors.
+     */
+    VALIDATION_FAIL_ON_WARNING(new Parameter<>("validationFailOnWarning", false)),
+
+    /**
      * Colours used to represent the issues in the calendar editor.
      */
     ISSUE_COLOURS(new Parameter<>("issue.colours",
@@ -610,6 +615,8 @@ public enum ParameterCore implements ParameterInterface {
     ACTIVE_MQ_AUTH_PASSWORD(new Parameter<>("activeMQ.authPassword", "")),
 
     ACTIVE_MQ_FINALIZE_STEP_QUEUE(new Parameter<UndefinedParameter>("activeMQ.finalizeStep.queue")),
+
+    ACTIVE_MQ_TASK_ACTION_QUEUE(new Parameter<UndefinedParameter>("activeMQ.taskAction.queue")),
 
     ACTIVE_MQ_USER(new Parameter<UndefinedParameter>("activeMQ.user")),
 
