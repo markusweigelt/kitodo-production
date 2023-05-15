@@ -79,7 +79,7 @@ public class Template extends BaseTemplateBean {
     }
 
     /**
-     * Check if workflow is active.
+     * Check if template is active.
      *
      * @return true or false
      */
