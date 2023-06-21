@@ -14,6 +14,28 @@
 /*eslint new-cap: ["error", { "capIsNewExceptionPattern": "^PF" }]*/
 /*eslint complexity: ["error", 10]*/
 
+function addLeadingZeros(num, totalLength) {
+    return String(num).padStart(totalLength, '0');
+}
+
+function mediaViewFormatTime( ms ) {
+    let seconds = ms / 1000;
+    let hours = parseInt( seconds / 3600 ); // 3,600 seconds in 1 hour
+    seconds = seconds % 3600; // seconds remaining after extracting hours
+    let minutes = parseInt( seconds / 60 ); // 60 seconds in 1 minute
+    seconds = seconds % 60;
+    let formattedTime = addLeadingZeros(hours, 2) + ":" + addLeadingZeros(minutes, 2) + ":";
+    seconds = seconds.toString();
+    if(seconds.includes(".")) {
+        let secondsSplitted = seconds.split(".");
+        let last = parseFloat(addLeadingZeros(secondsSplitted[0], 2) + "." + secondsSplitted[1]);
+        formattedTime += last.toFixed(2);
+    } else {
+        formattedTime += addLeadingZeros(seconds, 2) + ".00";
+    }
+    return formattedTime;
+}
+
 var metadataEditor = {};
 
 /**
@@ -59,6 +81,16 @@ metadataEditor.gallery = {
     handleDragStart(event) {
         // call thumbnail drag start handler, since only thumbnails are draggable
         this.pages.handleDragStart(event);
+    },
+
+    mediaViews: {
+        setBeginIfEmpty() {
+            let begin = document.getElementById("mediaViewForm:beginInput");
+            if(!begin.value) {
+                let currentMilliseconds = document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio').currentTime * 1000;
+                begin.value = mediaViewFormatTime(currentMilliseconds);
+            }
+        }
     },
 
     /**

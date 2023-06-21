@@ -109,13 +109,23 @@ sup {
 }
 
 @keyframes fadein {
-    0% {opacity: 0;}
-    50% {opacity: 0;}
-    100% {opacity: 1;}
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 
 html.progressCursor * {
     cursor: progress;
+}
+
+.hidden {
+    display: none
 }
 
 /*----------------------------------------------------------------------
@@ -3019,10 +3029,51 @@ Column content
     width: 100%;
 }
 
+#imagePreviewForm\:mediaViewsListContainer .mediaViewsList li {
+    border-top: 1px solid var(--cloudy-gray);
+}
+
+#imagePreviewForm\:mediaViewsListContainer .mediaViewsList li:first-child {
+    border: none;
+}
+
+#imagePreviewForm\:mediaViewsListContainer .mediaViewsDetail {
+    width: 100%;
+}
+
+#imagePreviewForm\:mediaViewsListContainer .mediaViewsDetail .metadata {
+
+}
+
+#imagePreviewForm\:mediaViewsListContainer .mediaViewsDetail .metadata td {
+    padding: 5px;
+}
+
+#imagePreviewForm\:mediaViewsListContainer .mediaViewsDetail .actions {
+    width: 85px;
+}
+
+#imagePreviewForm\:mediaViewsListContainer .mediaViewsDetail .actions button {
+    margin-left: 8px;
+}
+
+#imagePreviewForm\:mediaViewsListContainer .mediaViewsDetail .actions button:first-child {
+    margin-left: 0;
+}
+
+
+
+
 #imagePreviewForm\:mediaDetail {
     display: flex;
     width: 100%;
     align-items: center;
+    justify-content: left;
+}
+
+#imagePreviewForm\:mediaDetailMediaContainer {
+    width: 100%;
+    display: flex;
     justify-content: center;
     flex-direction: column;
     gap: 24px;
@@ -3062,6 +3113,22 @@ Column content
 #imagePreviewForm .mediaListIconItem > i {
     font-size: 70px;
     color: white;
+}
+
+#imagePreviewForm\:mediaViewsListContainer {
+    height: 100%;
+    overflow-y: scroll;
+    background: var(--trans-blue);
+    flex: 0 0 32%;
+    min-width: 130px;
+}
+
+#imagePreviewForm\:addMediaView {
+    border-radius: var(--default-border-radius);
+    box-shadow: var(--second-level-shadow);
+    margin-left: 10px;
+    bottom: 22px;
+    position: absolute;
 }
 
 #map {
@@ -3156,6 +3223,7 @@ Column content
     width: 100px;
     flex-shrink: 0;
     flex-grow: 0;
+    flex: 0 0 104px;
 }
 
 #thumbnailStripeScrollableContent {
