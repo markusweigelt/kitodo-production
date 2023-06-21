@@ -33,7 +33,7 @@ const wavesurfer = WaveSurfer.create({
 });
 
 wavesurfer.once('decode', () => {
-    let waveToolsContainer = document.getElementById("waveTools")
+    let waveToolsContainer = document.getElementById("imagePreviewForm:waveTools")
     const waveToolsSlider = waveToolsContainer.querySelector('input[type="range"]')
 
     waveToolsSlider.addEventListener('input', (e) => {
