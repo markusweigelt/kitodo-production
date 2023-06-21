@@ -3068,6 +3068,7 @@ Column content
     display: flex;
     width: 100%;
     justify-content: left;
+    overflow: hidden;
 }
 
 #imagePreviewForm\:mediaDetailMediaContainer {
@@ -3077,6 +3078,7 @@ Column content
     justify-content: center;
     flex-direction: column;
     gap: 24px;
+    overflow: hidden;
 }
 
 #imagePreviewForm\:mediaDetail .mediaPreviewItem {
