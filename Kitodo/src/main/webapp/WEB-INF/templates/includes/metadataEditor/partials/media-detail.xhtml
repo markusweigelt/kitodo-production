@@ -27,7 +27,7 @@
                 rendered="#{mediaProvider.hasMediaViewVariant(selectedGalleryMediaContent) and (fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video') or fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio'))}">
 
             <p:outputPanel id="mediaDetailMediaContainer" >
-
+              
                 <p:outputPanel id="waveTools" rendered="#{mediaProvider.hasMediaViewVariant(selectedGalleryMediaContent) and fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio')}" >
                     <div>
                         <label>Zoom: <input type="range" min="0" max="1000" value="0"/></label>
@@ -64,7 +64,8 @@
                     <f:param name="krsc" value="true"/>
                 </p:media>
 
-                <h:outputScript a:type="module" name="js/media_detail_audio.js" rendered="#{mediaProvider.hasMediaViewVariant(selectedGalleryMediaContent) and fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio')}" />
+                <h:outputScript a:type="module" name="js/libs/wavesurfer/wavesurfer.esm.js" rendered="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio')}" />
+                <h:outputScript a:type="module" name="js/media_detail_audio.js" rendered="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio')}" />
             </p:outputPanel>
 
             <p:outputPanel id="mediaViewsListContainer"
@@ -114,7 +115,7 @@
                     </p:commandButton>
                 </h:panelGroup>
             </p:outputPanel>
-
+          
         </ui:fragment>
 
         <ui:fragment
