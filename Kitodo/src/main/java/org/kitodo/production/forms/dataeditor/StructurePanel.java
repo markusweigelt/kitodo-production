@@ -177,9 +177,17 @@ public class StructurePanel implements Serializable {
              */
             return;
         }
-        LogicalDivision selectedStructure = getSelectedStructure().get();
+        deleteLogicalDivision(getSelectedStructure().get());
+    }
+
+    /**
+     * Delete the logical division.
+     *
+     * @param selectedStructure The logical division.
+     */
+    public void deleteLogicalDivision(LogicalDivision selectedStructure) {
         LinkedList<LogicalDivision> ancestors = MetadataEditor.getAncestorsOfLogicalDivision(selectedStructure,
-            structure);
+                structure);
         if (ancestors.isEmpty()) {
             // The selected element is the root node of the tree.
             return;
@@ -219,27 +227,26 @@ public class StructurePanel implements Serializable {
 
     void deleteSelectedPhysicalDivision() {
         for (Pair<PhysicalDivision, LogicalDivision> selectedPhysicalDivision : dataEditor.getSelectedMedia()) {
-            if (!dataEditor.getUnsavedDeletedMedia().contains(selectedPhysicalDivision.getKey())) {
-                if (selectedPhysicalDivision.getKey().getLogicalDivisions().size() > 1) {
-                    Helper.setMessage(selectedPhysicalDivision.getKey().toString() + ": is removed fom all assigned structural elements");
+            PhysicalDivision physicalDivision = selectedPhysicalDivision.getKey();
+            if (!dataEditor.getUnsavedDeletedMedia().contains(physicalDivision)) {
+                if (physicalDivision.getLogicalDivisions().size() > 1) {
+                    Helper.setMessage(
+                            physicalDivision + ": is removed fom all assigned structural elements");
                 }
-                for (LogicalDivision structuralElement : selectedPhysicalDivision.getKey().getLogicalDivisions()) {
-                    structuralElement.getViews().removeIf(view -> view.getPhysicalDivision().equals(selectedPhysicalDivision.getKey()));
+                for (LogicalDivision structuralElement : physicalDivision.getLogicalDivisions()) {
+                    structuralElement.getViews().removeIf(view -> view.getPhysicalDivision().equals(physicalDivision));
                 }
-                selectedPhysicalDivision.getKey().getLogicalDivisions().clear();
-                LinkedList<PhysicalDivision> ancestors = MetadataEditor.getAncestorsOfPhysicalDivision(selectedPhysicalDivision.getKey(),
-                        dataEditor.getWorkpiece().getPhysicalStructure());
-                if (ancestors.isEmpty()) {
-                    // The selected element is the root node of the tree.
+                physicalDivision.getLogicalDivisions().clear();
+                if (!deletePhysicalDivision(physicalDivision)) {
                     return;
                 }
-                PhysicalDivision parent = ancestors.getLast();
-                parent.getChildren().remove(selectedPhysicalDivision.getKey());
-                dataEditor.getUnsavedDeletedMedia().add(selectedPhysicalDivision.getKey());
+
+                dataEditor.getUnsavedDeletedMedia().add(physicalDivision);
             }
         }
         int i = 1;
-        for (PhysicalDivision physicalDivision : dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted()) {
+        for (PhysicalDivision physicalDivision : dataEditor.getWorkpiece()
+                .getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted()) {
             physicalDivision.setOrder(i);
             i++;
         }
@@ -248,6 +255,25 @@ public class StructurePanel implements Serializable {
         dataEditor.getSelectedMedia().clear();
         dataEditor.getGalleryPanel().updateStripes();
         dataEditor.getPaginationPanel().show();
+    }
+
+    /**
+     * Delete as physical division.
+     *
+     * @param physicalDivision The physical division.
+     * @return True if deleted
+     */
+    public boolean deletePhysicalDivision(PhysicalDivision physicalDivision) {
+        LinkedList<PhysicalDivision> ancestors = MetadataEditor.getAncestorsOfPhysicalDivision(physicalDivision,
+                dataEditor.getWorkpiece().getPhysicalStructure());
+        if (ancestors.isEmpty()) {
+            // The selected element is the root node of the tree.
+            return false;
+        }
+        PhysicalDivision parent = ancestors.getLast();
+        parent.getChildren().remove(physicalDivision);
+
+        return true;
     }
 
     /**

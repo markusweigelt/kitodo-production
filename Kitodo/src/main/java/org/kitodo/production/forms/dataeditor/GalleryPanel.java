@@ -86,6 +86,7 @@ public class GalleryPanel {
             "imagePreviewForm:unstructuredMediaList:(\\d+):unstructuredPageLastDropArea");
 
     private final DataEditorForm dataEditor;
+    private final MediaViewsPanel mediaViewsPanel;
     private GalleryViewMode galleryViewMode = GalleryViewMode.LIST;
     private List<GalleryMediaContent> medias = Collections.emptyList();
 
@@ -104,6 +105,7 @@ public class GalleryPanel {
 
     GalleryPanel(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
+        this.mediaViewsPanel = new MediaViewsPanel(dataEditor);
     }
 
     String getAcquisitionStage() {
@@ -975,5 +977,9 @@ public class GalleryPanel {
      */
     public String getCachingUUID() {
         return cachingUUID;
+    }
+
+    public MediaViewsPanel getMediaViewsPanel() {
+        return mediaViewsPanel;
     }
 }
