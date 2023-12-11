@@ -49,6 +49,7 @@ import org.kitodo.production.enums.MediaContentType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.utils.MediaUtil;
 import org.primefaces.PrimeFaces;
@@ -87,6 +88,7 @@ public class GalleryPanel {
             "imagePreviewForm:unstructuredMediaList:(\\d+):unstructuredPageLastDropArea");
 
     private final DataEditorForm dataEditor;
+    private final MediaPartialsPanel mediaPartialsPanel;
     private GalleryViewMode galleryViewMode = GalleryViewMode.LIST;
     private List<GalleryMediaContent> medias = Collections.emptyList();
 
@@ -105,6 +107,7 @@ public class GalleryPanel {
 
     GalleryPanel(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
+        this.mediaPartialsPanel = new MediaPartialsPanel(dataEditor);
     }
 
     String getAcquisitionStage() {
@@ -477,9 +480,9 @@ public class GalleryPanel {
                 siblingWithViewsIdx += 1;
                 siblingWithoutViewsIdx += 1;
             } else {
-                // add view
                 for (GalleryMediaContent galleryMediaContent : medias) {
-                    if (Objects.equals(view.getPhysicalDivision(), galleryMediaContent.getView().getPhysicalDivision())) {
+                    if (Objects.equals(view.getPhysicalDivision(),
+                            galleryMediaContent.getView().getPhysicalDivision())) {
                         galleryStripe.getMedias().add(galleryMediaContent);
                         List<Integer> viewTreeNodeIdList = new ArrayList<>(treeNodeIdList);
                         viewTreeNodeIdList.add(siblingWithViewsIdx);
@@ -814,6 +817,15 @@ public class GalleryPanel {
             }
         }
 
+        if (Objects.nonNull(selectedPhysicalDivision) && selectedPhysicalDivision.hasMediaPartialView()) {
+            View mediaView = DataEditorService.getViewOfBaseMediaByMediaFiles(dataEditor.getStructurePanel().getLogicalTree().getChildren(),
+                    selectedPhysicalDivision.getMediaFiles());
+            if (Objects.nonNull(mediaView)) {
+                selectedPhysicalDivision = mediaView.getPhysicalDivision();
+                stripeIndex = "";
+            }
+        }
+
         try {
             this.dataEditor.getMetadataPanel().preserveLogical();
         } catch (InvalidMetadataValueException | NoSuchMetadataFieldException e) {
@@ -924,8 +936,12 @@ public class GalleryPanel {
         }
 
         dataEditor.getSelectedMedia().clear();
-        dataEditor.getSelectedMedia().add(
-            new ImmutablePair<>(currentSelection.getView().getPhysicalDivision(), parentStripe.getStructure()));
+        LogicalDivision logicalDivision = parentStripe.getStructure();
+        PhysicalDivision physicalDivision = currentSelection.getView().getPhysicalDivision();
+        if (physicalDivision.hasMediaPartialView()) {
+            logicalDivision = physicalDivision.getLogicalDivisions().get(0);
+        }
+        dataEditor.getSelectedMedia().add(new ImmutablePair<>(physicalDivision, logicalDivision));
     }
 
     private void rangeSelect(GalleryMediaContent currentSelection, GalleryStripe parentStripe) {
@@ -1013,4 +1029,12 @@ public class GalleryPanel {
         return false;
     }
 
+    /**
+     * Get the media partials panel.
+     *
+     * @return The media partials
+     */
+    public MediaPartialsPanel getMediaPartialsPanel() {
+        return mediaPartialsPanel;
+    }
 }

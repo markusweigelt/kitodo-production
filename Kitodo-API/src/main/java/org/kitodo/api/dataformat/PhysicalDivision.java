@@ -53,6 +53,8 @@ public class PhysicalDivision extends Division<PhysicalDivision> {
      */
     private Map<MediaVariant, URI> mediaFiles = new HashMap<>();
 
+    private MediaPartialView mediaPartialView;
+
     /**
      * Saves the METS identifier for the division.
      */
@@ -115,6 +117,35 @@ public class PhysicalDivision extends Division<PhysicalDivision> {
         return logicalDivisions;
     }
 
+    /**
+     * Set the media partial view.
+     *
+     * @param mediaPartialView
+     *         The media partial view
+     */
+    public void setMediaPartialView(MediaPartialView mediaPartialView) {
+        mediaPartialView.setPhysicalDivision(this);
+        this.mediaPartialView = mediaPartialView;
+    }
+
+    /**
+     * Check if physical division has media partial.
+     *
+     * @return True if has media partial
+     */
+    public boolean hasMediaPartialView() {
+        return Objects.nonNull(mediaPartialView);
+    }
+
+    /**
+     * Get the media partial.
+     *
+     * @return The media partial.
+     */
+    public MediaPartialView getMediaPartialView() {
+        return mediaPartialView;
+    }
+
     @Override
     public String toString() {
         String fileName = "No file (";
@@ -141,7 +172,8 @@ public class PhysicalDivision extends Division<PhysicalDivision> {
             return false;
         }
         PhysicalDivision physicalDivision = (PhysicalDivision) o;
-        return Objects.equals(mediaFiles, physicalDivision.mediaFiles);
+        return Objects.equals(mediaFiles, physicalDivision.mediaFiles) && Objects.equals(mediaPartialView,
+                physicalDivision.mediaPartialView);
     }
 
     @Override
@@ -149,6 +181,9 @@ public class PhysicalDivision extends Division<PhysicalDivision> {
         final int prime = 31;
         int result = super.hashCode();
         result = prime * result + ((mediaFiles == null) ? 0 : mediaFiles.hashCode());
+        result = prime * result + ((Objects.isNull(mediaPartialView) || Objects.isNull(mediaPartialView.getBegin()))
+                ? 0
+                : mediaPartialView.getBegin().hashCode());
         return result;
     }
 }

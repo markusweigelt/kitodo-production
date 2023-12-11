@@ -31,7 +31,12 @@ public enum FunctionalDivision {
     /**
      * A division whose children are created from this division directly.
      */
-    CREATE_CHILDREN_FROM_PARENT("createChildrenFromParent");
+    CREATE_CHILDREN_FROM_PARENT("createChildrenFromParent"),
+
+    /**
+     * Indicate the division for media partial usage.
+     */
+    MEDIA_PARTIAL("mediaPartial");
 
     /**
      * With the logger, text can be written to a log file or to the console.
@@ -39,8 +44,7 @@ public enum FunctionalDivision {
     private static final Logger logger = LogManager.getLogger(FunctionalDivision.class);
 
     /**
-     * This character string defines how the special field is to be marked in
-     * the ruleset.
+     * This character string defines how the special field is to be marked in the ruleset.
      */
     private final String mark;
 
