@@ -733,6 +733,44 @@ public class ProjectForm extends BaseForm {
         project.setPreview(getFolderMap().get(preview));
     }
 
+
+    /**
+     * Returns the state of the preview tooltip field.
+     *
+     * @return True if enabled
+     */
+    public boolean isPreviewTooltip() {
+        return project.isPreviewTooltip();
+    }
+
+    /**
+     * Sets the state of the preview tooltip field.
+     *
+     * @param previewTooltip True if enabled
+     *
+     */
+    public void setPreviewTooltip(boolean previewTooltip) {
+        project.setPreviewTooltip(previewTooltip);
+    }
+
+    /**
+     * Get the status if the media view should be displayed preview tooltip.
+     *
+     * @return True if is active
+     */
+    public boolean isPreviewTooltipMediaView() {
+        return project.isPreviewTooltipMediaView();
+    }
+
+    /**
+     * Set the status if the media view should be displayed preview tooltip.
+     *
+     * @param previewTooltipMediaView True if is active
+     */
+    public void setPreviewTooltipMediaView(boolean previewTooltipMediaView) {
+        project.setPreviewTooltipMediaView(previewTooltipMediaView);
+    }
+
     /**
      * Returns the folder to use for audio preview.
      *
